@@ -11,7 +11,6 @@ import Thunderstorm from "../icons/Thunderstorm.png";
 import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
-import { FullscreenControl } from "@pbe/react-yandex-maps";
 
 
 type WeatherProps = {

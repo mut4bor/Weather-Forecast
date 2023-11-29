@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import "./App.css";
 import Weather from "./components/Weather";
 import Form from "./components/Form";
 import Date from "./components/Date";
 import { IWeather } from "./components/Types";
-import { YMaps, Map, Circle } from '@pbe/react-yandex-maps';
-import MapA from "./components/Map";
+import GeoMap from "./components/GeoMap";
 
 function App() {
 
-  const [apiLat, setApiLat] = useState("");
-  const [apiLon, setApiLon] = useState("");
+  const [apiLat, setApiLat] = useState(NaN);
+  const [apiLon, setApiLon] = useState(NaN);
+  const [api, setApi] = useState([]);
   const [data, setData] = useState<IWeather | undefined>();
   const [isModalVisible, setIsModalVisible] = useState(true);
 	
+
   const apiCall = () => {
     const apiKey = `939131d869af9ff0b3f372d6777bf3bc`;
 
@@ -45,9 +46,14 @@ function App() {
       });
   };
 
+	const updateMapData = useCallback(([lat, lon]: [number, number]) => {
+		setApiLat(lat)
+		setApiLon(lon)
+		console.log('updateMapData')
+	}, [])
+
   return (
     <div className=" p-6 flex flex-row flex-wrap ">
-      {/* <div className="fixed bg-black/50 top-0 right-0 left-0 bottom-0"></div> */}
 			<div className=" w-[50%] ">
 				<Date />
 				<Weather data={data} />
@@ -60,7 +66,7 @@ function App() {
           setIsModalVisible={setIsModalVisible}
         />
       </div>
-			<MapA />
+			<GeoMap updateMapData={updateMapData} />
     </div>
   );
 }

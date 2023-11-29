@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
 type FormProps = {
-	onLatChange: (string: string) => void;
-	onLonChange: (string: string) => void;
+	onLatChange: (number: number) => void;
+	onLonChange: (number: number) => void;
 	apiCall: () => void;
 	setIsModalVisible: (boolean: boolean) => void
 }
 
-const Form = (props: FormProps) => {
+export default function Form(props: FormProps) {
 	const [valueLat, setValueLat] = useState("");
   const [valueLon, setValueLon] = useState("");
 	const isInputLatEmpty = valueLat.trim() === "";
@@ -21,12 +21,12 @@ const Form = (props: FormProps) => {
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueLat(event.target.value);
-		onLatChange(event.target.value);
+		onLatChange(parseCoordinate(event.target.value));
   }
 
   const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueLon(event.target.value);
-		onLonChange(event.target.value);
+		onLonChange(parseCoordinate(event.target.value));
   }
   return (
     <>
@@ -39,8 +39,8 @@ const Form = (props: FormProps) => {
               onClick={() => {
                 setValueLat("59.901");
                 setValueLon("30.2959");
-								onLatChange("59.901");
-								onLonChange("30.2959");
+								onLatChange(59.901);
+								onLonChange(30.2959);
               }}
             >
               Санкт-Петербург
@@ -50,8 +50,8 @@ const Form = (props: FormProps) => {
               onClick={() => {
                 setValueLat("59.013392");
                 setValueLon("30.329159");
-								onLatChange("59.013392");
-								onLonChange("30.329159");
+								onLatChange(59.013392);
+								onLonChange(30.329159);
               }}
             >
               Москва
@@ -61,8 +61,8 @@ const Form = (props: FormProps) => {
               onClick={() => {
                 setValueLat("56.8519");
                 setValueLon("60.6122");
-								onLatChange("56.8519");
-								onLonChange("60.6122");
+								onLatChange(56.8519);
+								onLonChange(60.6122);
               }}
             >
               Екатеринбург
@@ -72,8 +72,8 @@ const Form = (props: FormProps) => {
               onClick={() => {
                 setValueLat("55.0415");
                 setValueLon("82.9346");
-								onLatChange("55.0415");
-								onLonChange("82.9346");
+								onLatChange(55.0415);
+								onLonChange(82.9346);
               }}
             >
               Новосибирск
@@ -83,8 +83,8 @@ const Form = (props: FormProps) => {
               onClick={() => {
                 setValueLat("56.3287");
                 setValueLon("44.002");
-								onLatChange("56.3287");
-								onLonChange("44.002");
+								onLatChange(56.3287);
+								onLonChange(44.002);
               }}
             >
               Нижний Новгород
@@ -117,9 +117,9 @@ const Form = (props: FormProps) => {
           type="button"
           className=" border px-5 py-1 mt-2 bg-emerald-400 text-white font-bold "
           onClick={() => {
-            if (!isInputLatEmpty && !isInputLonEmpty) {
+           
               apiCall();
-            }
+            
           }}
         >
           Подтвердить
@@ -128,4 +128,9 @@ const Form = (props: FormProps) => {
     </>
   );
 }
-export default Form;
+
+function parseCoordinate(string: string):number {
+	const result = parseFloat(string.trim())
+	return Number.isNaN(result) ? 0 : result
+}
+
