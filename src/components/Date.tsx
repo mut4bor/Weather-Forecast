@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 function TodayDate() {
-
   function getDate() {
     const today = new Date();
     const monthNames = [
@@ -20,10 +19,10 @@ function TodayDate() {
     ];
     const month = monthNames[today.getMonth()];
     const date = today.getDate();
-    const hour = today.getHours();
-		const minutes = today.getMinutes();
-		const seconds = today.getSeconds();
-    return `${date} ${month}, ${hour}:${minutes}`;
+    const hour = today.getHours() < 10 ? `0` + today.getHours() : today.getHours();
+    const minutes = today.getMinutes() < 10 ? `0` + today.getMinutes() : today.getMinutes();
+    const seconds = today.getSeconds();
+    return `Сейчас ${hour}:${minutes}`;
   }
 
   const [currentDate, setCurrentDate] = useState(getDate());
@@ -36,7 +35,7 @@ function TodayDate() {
     };
   }, []);
 
-  return <div className="text-white">{currentDate}</div>;
+  return <span className="text-white">{currentDate}</span>;
 }
 
 export default TodayDate;

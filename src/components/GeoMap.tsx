@@ -1,7 +1,16 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
 //@ts-ignore
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
+
+type GeoMapProps = {
+  updateMapData: (array: [number, number]) => void;
+};
+
+type ChildGeoMapProps = {
+  handleDragCircle: (array: [number, number]) => void;
+};
+
 type GeoObject = {
   events: {
     add: Function;
@@ -11,55 +20,43 @@ type GeoObject = {
   };
 };
 
-
-type GeoObjectProps = {
-	handleDragCircle: (array: [number, number]) => void;
-};
-
-type GeoMapProps = {
-	updateMapData: (array: [number, number]) => void;
-}
-
-
 export default memo(function GeoMap(props: GeoMapProps) {
-	const {updateMapData} = props
-	const updateFn = debounce(updateMapData, 300)
-	const handleDragCircle = useCallback((event: any) => {
-		const { target } = event?.originalEvent ?? {};
-		console.log("Circle current position", target?.geometry?.getCoordinates());
-		const coordinates = target?.geometry?.getCoordinates() as ([number, number] | undefined)
-		if (coordinates) updateFn(coordinates)
-	}, [])
+  const { updateMapData } = props;
+  const updateFn = debounce(updateMapData, 300);
+  const handleDragCircle = useCallback((event: any) => {
+    const { target } = event?.originalEvent ?? {};
+    console.log("Circle current position", target?.geometry?.getCoordinates());
+    const coordinates = target?.geometry?.getCoordinates() as
+      | [number, number]
+      | undefined;
+    if (coordinates) updateFn(coordinates);
+  }, []);
 
-	
-	console.log('rerender')
-	return (
-		<>
-			<ChildGeoMap handleDragCircle={handleDragCircle} />
-		</>
-	)
-})
+  console.log("rerender");
+  return (
+    <>
+      <ChildGeoMap handleDragCircle={handleDragCircle} />
+    </>
+  );
+});
 
-
-function ChildGeoMap(props: GeoObjectProps) {
+function ChildGeoMap(props: ChildGeoMapProps) {
   const defaultCoordsLat = 59.95338836499352;
   const defaultCoordsLon = 30.306886328124797;
   const ref = useRef<GeoObject>();
-	// useTraceUpdate(props)
   useEffect(() => {
-		setTimeout(()=> {
-			handleCoordinates()
-		}, 1000);
+    setTimeout(() => {
+      handleCoordinates();
+    }, 1000);
   }, [ref.current]);
 
-
-	function handleCoordinates() {
-		if (ref.current) {
-			const circle = ref.current;
-			console.log("Circle default position", circle.geometry.getCoordinates());
-			circle.events.add("dragend", props.handleDragCircle)
-		}
-	}
+  function handleCoordinates() {
+    if (ref.current) {
+      const circle = ref.current;
+      console.log("Circle default position", circle.geometry.getCoordinates());
+      circle.events.add("dragend", props.handleDragCircle);
+    }
+  }
 
   return (
     <>
@@ -72,7 +69,7 @@ function ChildGeoMap(props: GeoObjectProps) {
           }}
           modules={["control.ZoomControl", "control.FullscreenControl"]}
           width={"100%"}
-          height={"500px"}
+          height={"100vh"}
         >
           <RouteEditor />
           <Circle
@@ -102,9 +99,8 @@ function useTraceUpdate(props: any) {
       return ps;
     }, {});
     if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
+      console.log("Changed props:", changedProps);
     }
     prev.current = props;
   });
 }
-

@@ -1,99 +1,40 @@
 import React, { useState } from "react";
 
 type FormProps = {
-	onLatChange: (number: number) => void;
-	onLonChange: (number: number) => void;
-	apiCall: () => void;
-	setIsModalVisible: (boolean: boolean) => void
-}
+  onLatChange: (number: number) => void;
+  onLonChange: (number: number) => void;
+  apiCall: () => void;
+};
 
 export default function Form(props: FormProps) {
-	const [valueLat, setValueLat] = useState("");
+  const [valueLat, setValueLat] = useState("");
   const [valueLon, setValueLon] = useState("");
-	const isInputLatEmpty = valueLat.trim() === "";
-  const isInputLonEmpty = valueLon.trim() === "";
 
-	const { onLatChange, onLonChange, apiCall, setIsModalVisible } = props;
+  const { onLatChange, onLonChange, apiCall } = props;
 
-	const submitHandler = (event: React.FormEvent) => {
+  const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-  }
+  };
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueLat(event.target.value);
-		onLatChange(parseCoordinate(event.target.value));
-  }
+    onLatChange(parseCoordinate(event.target.value));
+  };
 
   const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValueLon(event.target.value);
-		onLonChange(parseCoordinate(event.target.value));
-  }
+    onLonChange(parseCoordinate(event.target.value));
+  };
   return (
     <>
-      <form className="flex flex-col mb-2 " onSubmit={submitHandler}>
-        <div className="flex flex-wrap">
-          <p className=" w-full ">Введите координаты города:</p>
-          <ul className=" flex flex-row w-full whitespace-nowrap overflow-auto gap-3 ">
-            <li
-              className=" bg-emerald-400 rounded-md px-4 py-1 text-white font-bold cursor-pointer "
-              onClick={() => {
-                setValueLat("59.901");
-                setValueLon("30.2959");
-								onLatChange(59.901);
-								onLonChange(30.2959);
-              }}
-            >
-              Санкт-Петербург
-            </li>
-            <li
-              className=" bg-emerald-400 rounded-md px-4 py-1 text-white font-bold cursor-pointer "
-              onClick={() => {
-                setValueLat("59.013392");
-                setValueLon("30.329159");
-								onLatChange(59.013392);
-								onLonChange(30.329159);
-              }}
-            >
-              Москва
-            </li>
-            <li
-              className=" bg-emerald-400 rounded-md px-4 py-1 text-white font-bold cursor-pointer "
-              onClick={() => {
-                setValueLat("56.8519");
-                setValueLon("60.6122");
-								onLatChange(56.8519);
-								onLonChange(60.6122);
-              }}
-            >
-              Екатеринбург
-            </li>
-            <li
-              className=" bg-emerald-400 rounded-md px-4 py-1 text-white font-bold cursor-pointer "
-              onClick={() => {
-                setValueLat("55.0415");
-                setValueLon("82.9346");
-								onLatChange(55.0415);
-								onLonChange(82.9346);
-              }}
-            >
-              Новосибирск
-            </li>
-            <li
-              className=" bg-emerald-400 rounded-md px-4 py-1 text-white font-bold cursor-pointer "
-              onClick={() => {
-                setValueLat("56.3287");
-                setValueLon("44.002");
-								onLatChange(56.3287);
-								onLonChange(44.002);
-              }}
-            >
-              Нижний Новгород
-            </li>
-          </ul>
-          <div className="flex flex-col w-1/2">
-            <label htmlFor="lat">Широта:</label>
+      <form className="flex flex-col " onSubmit={submitHandler}>
+        <div className="flex flex-wrap justify-between">
+          <div className="flex flex-col w-[47.5%]">
+            <label className=" text-white " htmlFor="lat">
+              Широта:
+            </label>
             <input
-              className="px-3 py-1 border"
+              className="px-3 py-1 border rounded-md"
               type="number"
               id="lat"
               placeholder="Введите широту"
@@ -101,10 +42,12 @@ export default function Form(props: FormProps) {
               onChange={changeLatHandler}
             />
           </div>
-          <div className="flex flex-col w-1/2">
-            <label htmlFor="lon">Долгота:</label>
+          <div className="flex flex-col w-[47.5%]">
+            <label className=" text-white " htmlFor="lon">
+              Долгота:
+            </label>
             <input
-              className="px-3 py-1 border"
+              className="px-3 py-1 border rounded-md"
               type="number"
               id="lon"
               placeholder="Введите долготу"
@@ -115,11 +58,9 @@ export default function Form(props: FormProps) {
         </div>
         <button
           type="button"
-          className=" border px-5 py-1 mt-2 bg-emerald-400 text-white font-bold "
+          className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
           onClick={() => {
-           
-              apiCall();
-            
+            apiCall();
           }}
         >
           Подтвердить
@@ -129,8 +70,7 @@ export default function Form(props: FormProps) {
   );
 }
 
-function parseCoordinate(string: string):number {
-	const result = parseFloat(string.trim())
-	return Number.isNaN(result) ? 0 : result
+export function parseCoordinate(string: string): number {
+  const result = parseFloat(string.trim());
+  return Number.isNaN(result) ? 0 : result;
 }
-

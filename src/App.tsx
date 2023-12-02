@@ -3,17 +3,13 @@ import "./App.css";
 import Weather from "./components/Weather";
 import Form from "./components/Form";
 import Date from "./components/Date";
-import { IWeather } from "./components/Types";
+import { IWeather } from "./components/WeatherTypes";
 import GeoMap from "./components/GeoMap";
 
 function App() {
-
-  const [apiLat, setApiLat] = useState(NaN);
-  const [apiLon, setApiLon] = useState(NaN);
-  const [api, setApi] = useState([]);
+  const [apiLat, setApiLat] = useState(59.901);
+  const [apiLon, setApiLon] = useState(30.2959);
   const [data, setData] = useState<IWeather | undefined>();
-  const [isModalVisible, setIsModalVisible] = useState(true);
-	
 
   const apiCall = () => {
     const apiKey = `939131d869af9ff0b3f372d6777bf3bc`;
@@ -40,34 +36,31 @@ function App() {
       })
       .then((data) => {
         setData(data);
+				console.log(data);
       })
       .catch((error) => {
         console.error("Произошла ошибка:", error);
       });
   };
 
-	const updateMapData = useCallback(([lat, lon]: [number, number]) => {
-		setApiLat(lat)
-		setApiLon(lon)
-		console.log('updateMapData')
-	}, [])
+  const updateMapData = useCallback(([lat, lon]: [number, number]) => {
+    setApiLat(lat);
+    setApiLon(lon);
+    console.log("updateMapData");
+  }, []);
 
   return (
-    <div className=" p-6 flex flex-row flex-wrap ">
-			<div className=" w-[50%] ">
-				<Date />
-				<Weather data={data} />
-			</div>
-			<div className="w-[50%] p-4 border bg-[#101d29]">
+    <>
+      <div className=" p-6 flex flex-col flex-wrap absolute z-50 bg-[#101d29] rounded-lg right-[10px] top-[10px]">
+        <Weather data={data} />
         <Form
           onLatChange={setApiLat}
           onLonChange={setApiLon}
           apiCall={apiCall}
-          setIsModalVisible={setIsModalVisible}
         />
       </div>
-			<GeoMap updateMapData={updateMapData} />
-    </div>
+      <GeoMap updateMapData={updateMapData} />
+    </>
   );
 }
 
