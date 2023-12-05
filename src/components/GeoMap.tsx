@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
+import { useAppDispatch, useAppSelector } from "../Redux/hooks";
 //@ts-ignore
 import debounce from "lodash/debounce";
 
@@ -22,17 +23,20 @@ type GeoObject = {
 
 export default memo(function GeoMap(props: GeoMapProps) {
   const { updateMapData } = props;
-  const updateFn = debounce(updateMapData, 300);
+  const dispatch = useAppDispatch();
+	
   const handleDragCircle = useCallback((event: any) => {
     const { target } = event?.originalEvent ?? {};
-    console.log("Circle current position", target?.geometry?.getCoordinates());
     const coordinates = target?.geometry?.getCoordinates() as
       | [number, number]
       | undefined;
-    if (coordinates) updateFn(coordinates);
+    if (coordinates) {
+      updateMapData(coordinates);
+      dispatch({ type: "coords/CircleLatReducer", payload: coordinates[0] });
+      dispatch({ type: "coords/CircleLonReducer", payload: coordinates[1] });
+    }
   }, []);
 
-  console.log("rerender");
   return (
     <>
       <ChildGeoMap handleDragCircle={handleDragCircle} />
@@ -41,8 +45,11 @@ export default memo(function GeoMap(props: GeoMapProps) {
 });
 
 function ChildGeoMap(props: ChildGeoMapProps) {
-  const defaultCoordsLat = 59.95338836499352;
-  const defaultCoordsLon = 30.306886328124797;
+	const circLat = useAppSelector((state) => state.circleLatitude)
+	const circLon = useAppSelector((state) => state.circleLongitude)
+	// console.log(circLat, circLon);
+  const defaultCoordsLat = circLat;
+  const defaultCoordsLon = circLon;
   const ref = useRef<GeoObject>();
   useEffect(() => {
     setTimeout(() => {
@@ -53,7 +60,6 @@ function ChildGeoMap(props: ChildGeoMapProps) {
   function handleCoordinates() {
     if (ref.current) {
       const circle = ref.current;
-      console.log("Circle default position", circle.geometry.getCoordinates());
       circle.events.add("dragend", props.handleDragCircle);
     }
   }

@@ -45,7 +45,7 @@ function App() {
   const updateMapData = useCallback(([lat, lon]: [number, number]) => {
     setApiLat(lat);
     setApiLon(lon);
-    console.log("updateMapData");
+		console.log(lat, lon)
   }, []);
 
   return (
@@ -56,6 +56,7 @@ function App() {
           onLatChange={setApiLat}
           onLonChange={setApiLon}
           apiCall={apiCall}
+					updateMapData={updateMapData}
         />
       </div>
       <GeoMap updateMapData={updateMapData} />

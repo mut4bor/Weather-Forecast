@@ -12,7 +12,6 @@ import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
 import Date from "../components/Date";
-import { type } from "os";
 
 type WeatherProps = {
   data: IWeather | undefined;
