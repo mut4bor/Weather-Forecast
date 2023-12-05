@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import "./App.css";
 import Weather from "./components/Weather";
 import Form from "./components/Form";
-import Date from "./components/Date";
 import { IWeather } from "./components/WeatherTypes";
 import GeoMap from "./components/GeoMap";
 
@@ -36,7 +35,7 @@ function App() {
       })
       .then((data) => {
         setData(data);
-				console.log(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Произошла ошибка:", error);

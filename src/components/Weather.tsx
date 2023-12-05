@@ -18,14 +18,8 @@ type WeatherProps = {
   data: IWeather | undefined;
 };
 
-type IconInterface = {
-	[index: string]: string;
-}
-
-
 const Weather = ({ data }: WeatherProps) => {
   const [weatherIcon, setWeatherIcon] = useState("");
-
 
   const iconMap = {
     "01d": ClearDay,
@@ -46,7 +40,7 @@ const Weather = ({ data }: WeatherProps) => {
     "13n": Snow,
     "50d": Fog,
     "50n": Fog,
-	} as Record<string, string>;
+  } as Record<string, string>;
 
   const weatherIconHandler = () => {
     if (data) {

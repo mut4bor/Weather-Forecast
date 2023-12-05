@@ -31,7 +31,7 @@ export default function Form(props: FormProps) {
         <div className="flex flex-wrap justify-between">
           <div className="flex flex-col w-[47.5%]">
             <label className=" text-white " htmlFor="lat">
-              Широта:
+              Широта
             </label>
             <input
               className="px-3 py-1 border rounded-md"
@@ -44,7 +44,7 @@ export default function Form(props: FormProps) {
           </div>
           <div className="flex flex-col w-[47.5%]">
             <label className=" text-white " htmlFor="lon">
-              Долгота:
+              Долгота
             </label>
             <input
               className="px-3 py-1 border rounded-md"
