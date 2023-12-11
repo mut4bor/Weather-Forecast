@@ -1,8 +1,12 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../Redux/hooks";
-//@ts-ignore
-import debounce from "lodash/debounce";
+import {
+  LAT,
+LON,
+
+} from '../Redux/actions'
+
 
 type GeoMapProps = {
   updateMapData: (array: [number, number]) => void;
@@ -24,7 +28,7 @@ type GeoObject = {
 export default memo(function GeoMap(props: GeoMapProps) {
   const { updateMapData } = props;
   const dispatch = useAppDispatch();
-	
+
   const handleDragCircle = useCallback((event: any) => {
     const { target } = event?.originalEvent ?? {};
     const coordinates = target?.geometry?.getCoordinates() as
@@ -32,8 +36,8 @@ export default memo(function GeoMap(props: GeoMapProps) {
       | undefined;
     if (coordinates) {
       updateMapData(coordinates);
-      dispatch({ type: "coords/CircleLatReducer", payload: coordinates[0] });
-      dispatch({ type: "coords/CircleLonReducer", payload: coordinates[1] });
+      dispatch({ type: LAT, payload: coordinates[0] });
+      dispatch({ type: LON, payload: coordinates[1] });
     }
   }, []);
 
@@ -45,8 +49,8 @@ export default memo(function GeoMap(props: GeoMapProps) {
 });
 
 function ChildGeoMap(props: ChildGeoMapProps) {
-	const circLat = useAppSelector((state) => state.circleLatitude)
-	const circLon = useAppSelector((state) => state.circleLongitude)
+	const circLat = useAppSelector((state) => state.latitude)
+	const circLon = useAppSelector((state) => state.longitude)
 	// console.log(circLat, circLon);
   const defaultCoordsLat = circLat;
   const defaultCoordsLon = circLon;
