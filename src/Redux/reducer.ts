@@ -1,44 +1,33 @@
+import { LAT, LON } from "./actions";
 
 const initialState = {
-  inputLatitude: 59.95338836499352,
-  inputLongitude: 30.306886328124797,
-  circleLatitude: 59.95338836499352,
-  circleLongitude: 30.306886328124797,
+  latitude: 59.95338836499352,
+  longitude: 30.306886328124797,
 };
 
-export default function CoordsReducer(state = initialState, action: { type: any; payload: any; }) {
+export default function CoordsReducer(
+  state = initialState,
+  action: { type: any; payload: any }
+) {
+  console.log(
+    "%c reducer",
+    "background: green; color: white; display: block;",
+    action
+  );
   switch (action.type) {
-    case 'coords/InputLatReducer': {
-			return {
-				...state,
-				inputLatitude: action.payload,
-				circleLatitude: action.payload,
-			}
+    case LAT: {
+      return {
+        ...state,
+        latitude: action.payload,
+      };
     }
-    case 'coords/InputLonReducer': {
-			return {
-				...state,
-				inputLongitude: action.payload,
-				circleLongitude: action.payload,
-			}
-    }
-    case 'coords/CircleLatReducer': {
-			return {
-				...state,
-				circleLatitude: action.payload,
-				inputLatitude: action.payload,
-			}
-    }
-    case 'coords/CircleLonReducer': {
-			return {
-				...state,
-				circleLongitude: action.payload,
-				inputLongitude: action.payload,
-			}
+    case LON: {
+      return {
+        ...state,
+        longitude: action.payload,
+      };
     }
     default:
-      return state
+      return state;
   }
 }
-
-
