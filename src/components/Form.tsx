@@ -18,7 +18,7 @@ export default function Form(props: FormProps) {
   const dispatch = useAppDispatch();
 	const inputLat = useAppSelector((state) => state.inputLatitude);
   const inputLon = useAppSelector((state) => state.inputLongitude);
-  const { onLatChange, onLonChange, apiCall, updateMapData } = props;
+  const { onLatChange, onLonChange, apiCall } = props;
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
