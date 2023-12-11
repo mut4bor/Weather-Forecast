@@ -1,9 +1,11 @@
 import React, { useDebugValue, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../Redux/hooks";
-import { store } from "../Redux/store";
-import CoordsReducer from "../Redux/reducer";
-//@ts-ignore
-import debounce from "lodash/debounce";
+
+import {
+  LAT,
+  LON,
+} from '../Redux/actions'
+
 
 type FormProps = {
   onLatChange: (number: number) => void;
@@ -13,21 +15,19 @@ type FormProps = {
 };
 
 export default function Form(props: FormProps) {
-  const [valueLat, setValueLat] = useState("");
-  const [valueLon, setValueLon] = useState("");
   const dispatch = useAppDispatch();
 	const inputLat = useAppSelector((state) => state.inputLatitude);
   const inputLon = useAppSelector((state) => state.inputLongitude);
-  const { onLatChange, onLonChange, apiCall } = props;
+  const { onLatChange, onLonChange, apiCall, updateMapData } = props;
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
   };
-  
+
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
-      type: "coords/InputLatReducer",
+      type: LAT,
       payload: event.target.value,
     });
     onLatChange(parseCoordinate(event.target.value));
@@ -35,7 +35,7 @@ export default function Form(props: FormProps) {
 
   const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
-      type: "coords/InputLonReducer",
+      type: LON,
       payload: event.target.value,
     });
     onLonChange(parseCoordinate(event.target.value));

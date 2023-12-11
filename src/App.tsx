@@ -43,6 +43,7 @@ function App() {
   };
 
   const updateMapData = useCallback(([lat, lon]: [number, number]) => {
+    console.log('%c update map data', 'background: red; color: white; display: block;', );
     setApiLat(lat);
     setApiLon(lon);
 		console.log(lat, lon)
