@@ -1,12 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
-import { useAppDispatch, useAppSelector } from "../Redux/hooks";
-import {
-  LAT,
-LON,
-
-} from '../Redux/actions'
-
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { LAT, LON } from "../redux/actions";
 
 type GeoMapProps = {
   updateMapData: (array: [number, number]) => void;
@@ -49,9 +44,9 @@ export default memo(function GeoMap(props: GeoMapProps) {
 });
 
 function ChildGeoMap(props: ChildGeoMapProps) {
-	const circLat = useAppSelector((state) => state.latitude)
-	const circLon = useAppSelector((state) => state.longitude)
-	// console.log(circLat, circLon);
+  const circLat = useAppSelector((state) => state.latitude);
+  const circLon = useAppSelector((state) => state.longitude);
+  // console.log(circLat, circLon);
   const defaultCoordsLat = circLat;
   const defaultCoordsLon = circLon;
   const ref = useRef<GeoObject>();

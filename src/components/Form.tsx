@@ -1,11 +1,7 @@
-import React, { useDebugValue, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../Redux/hooks";
-
-import {
-  LAT,
-  LON,
-} from '../Redux/actions'
-
+import FormInput from "./FormInput";
+import React from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { LAT, LON } from "../redux/actions";
 
 type FormProps = {
   onLatChange: (number: number) => void;
@@ -16,14 +12,13 @@ type FormProps = {
 
 export default function Form(props: FormProps) {
   const dispatch = useAppDispatch();
-	const inputLat = useAppSelector((state) => state.inputLatitude);
-  const inputLon = useAppSelector((state) => state.inputLongitude);
-  const { onLatChange, onLonChange, apiCall, updateMapData } = props;
+  const inputLat = useAppSelector((state) => state.latitude);
+  const inputLon = useAppSelector((state) => state.longitude);
+  const { onLatChange, onLonChange, apiCall } = props;
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
   };
-
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
@@ -45,32 +40,22 @@ export default function Form(props: FormProps) {
     <>
       <form className="flex flex-col " onSubmit={submitHandler}>
         <div className="flex flex-wrap justify-between">
-          <div className="flex flex-col w-[47.5%]">
-            <label className=" text-white " htmlFor="lat">
-              Широта
-            </label>
-            <input
-              className="px-3 py-1 border rounded-md"
-              type="number"
-              id="lat"
-              placeholder="Введите широту"
-              value={inputLat}
-              onChange={changeLatHandler}
-            />
-          </div>
-          <div className="flex flex-col w-[47.5%]">
-            <label className=" text-white " htmlFor="lon">
-              Долгота
-            </label>
-            <input
-              className="px-3 py-1 border rounded-md"
-              type="number"
-              id="lon"
-              placeholder="Введите долготу"
-              value={inputLon}
-              onChange={changeLonHandler}
-            />
-          </div>
+          <FormInput
+            labelText={"Широта"}
+            id={"lat"}
+            type={"number"}
+            placeholder={"Введите широту"}
+            value={inputLat}
+            onChange={changeLatHandler}
+          />
+          <FormInput
+            labelText={"Долгота"}
+            id={"lon"}
+            type={"number"}
+            placeholder={"Введите долготу"}
+            value={inputLon}
+            onChange={changeLonHandler}
+          />
         </div>
         <button
           type="button"

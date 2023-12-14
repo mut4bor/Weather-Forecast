@@ -11,7 +11,7 @@ function App() {
   const [data, setData] = useState<IWeather | undefined>();
 
   const apiCall = () => {
-    const apiKey = `939131d869af9ff0b3f372d6777bf3bc`;
+    const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
     const apiUrl =
       `https://api.openweathermap.org/data/2.5/weather
@@ -43,10 +43,13 @@ function App() {
   };
 
   const updateMapData = useCallback(([lat, lon]: [number, number]) => {
-    console.log('%c update map data', 'background: red; color: white; display: block;', );
+    console.log(
+      "%c update map data",
+      "background: red; color: white; display: block;"
+    );
     setApiLat(lat);
     setApiLon(lon);
-		console.log(lat, lon)
+    console.log(lat, lon);
   }, []);
 
   return (
@@ -57,7 +60,7 @@ function App() {
           onLatChange={setApiLat}
           onLonChange={setApiLon}
           apiCall={apiCall}
-					updateMapData={updateMapData}
+          updateMapData={updateMapData}
         />
       </div>
       <GeoMap updateMapData={updateMapData} />

@@ -50,6 +50,7 @@ const Weather = ({ data }: WeatherProps) => {
   useEffect(weatherIconHandler, [data]);
 
   return (
+		//! Make this readable via components deviding
     <>
       {data && (
         <div className=" text-white mb-2 ">
