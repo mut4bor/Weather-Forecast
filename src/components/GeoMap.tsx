@@ -1,7 +1,6 @@
-import React, { useRef, useState, useEffect, useCallback, memo } from "react";
+import { useRef, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { LAT, LON } from "../redux/actions";
 
 type GeoMapProps = {
   updateMapData: (array: [number, number]) => void;
@@ -31,8 +30,8 @@ export default memo(function GeoMap(props: GeoMapProps) {
       | undefined;
     if (coordinates) {
       updateMapData(coordinates);
-      dispatch({ type: LAT, payload: coordinates[0] });
-      dispatch({ type: LON, payload: coordinates[1] });
+      dispatch({ type: "coords/latitude", payload: coordinates[0].toFixed(4)});
+      dispatch({ type: "coords/longitude", payload: coordinates[1].toFixed(4)});
     }
   }, []);
 
@@ -44,11 +43,9 @@ export default memo(function GeoMap(props: GeoMapProps) {
 });
 
 function ChildGeoMap(props: ChildGeoMapProps) {
-  const circLat = useAppSelector((state) => state.latitude);
-  const circLon = useAppSelector((state) => state.longitude);
-  // console.log(circLat, circLon);
-  const defaultCoordsLat = circLat;
-  const defaultCoordsLon = circLon;
+  const defaultCoordsLat = useAppSelector((state) => state.coords.latitude);
+  const defaultCoordsLon = useAppSelector((state) => state.coords.longitude);
+
   const ref = useRef<GeoObject>();
   useEffect(() => {
     setTimeout(() => {
@@ -92,20 +89,4 @@ function ChildGeoMap(props: ChildGeoMapProps) {
       </YMaps>
     </>
   );
-}
-
-function useTraceUpdate(props: any) {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps: any, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log("Changed props:", changedProps);
-    }
-    prev.current = props;
-  });
 }

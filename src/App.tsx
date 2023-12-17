@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import "./App.css";
 import Weather from "./components/Weather";
 import Form from "./components/Form";
@@ -60,7 +60,6 @@ function App() {
           onLatChange={setApiLat}
           onLonChange={setApiLon}
           apiCall={apiCall}
-          updateMapData={updateMapData}
         />
       </div>
       <GeoMap updateMapData={updateMapData} />

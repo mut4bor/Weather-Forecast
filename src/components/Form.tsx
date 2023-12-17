@@ -1,19 +1,15 @@
-import FormInput from "./FormInput";
-import React from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { LAT, LON } from "../redux/actions";
 
 type FormProps = {
   onLatChange: (number: number) => void;
   onLonChange: (number: number) => void;
   apiCall: () => void;
-  updateMapData: (array: [number, number]) => void;
 };
 
 export default function Form(props: FormProps) {
   const dispatch = useAppDispatch();
-  const inputLat = useAppSelector((state) => state.latitude);
-  const inputLon = useAppSelector((state) => state.longitude);
+  const inputLat = useAppSelector((state) => state.coords.latitude);
+  const inputLon = useAppSelector((state) => state.coords.longitude);
   const { onLatChange, onLonChange, apiCall } = props;
 
   const submitHandler = (event: React.FormEvent) => {
@@ -21,24 +17,26 @@ export default function Form(props: FormProps) {
   };
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseCoordinate(event.target.value);
     dispatch({
-      type: LAT,
-      payload: event.target.value,
+      type: "coords/latitude",
+      payload: value,
     });
-    onLatChange(parseCoordinate(event.target.value));
+    onLatChange(value);
   };
 
   const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const value = parseCoordinate(event.target.value)
     dispatch({
-      type: LON,
-      payload: event.target.value,
+      type: "coords/longitude",
+      payload: value,
     });
-    onLonChange(parseCoordinate(event.target.value));
+    onLonChange(value);
   };
 
   return (
     <>
-      <form className="flex flex-col " onSubmit={submitHandler}>
+      <form className="flex flex-col" onSubmit={submitHandler}>
         <div className="flex flex-wrap justify-between">
           <FormInput
             labelText={"Широта"}
@@ -58,16 +56,42 @@ export default function Form(props: FormProps) {
           />
         </div>
         <button
-          type="button"
+          type="submit"
           className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
-          onClick={() => {
-            apiCall();
-          }}
+          onClick={apiCall}
         >
           Подтвердить
         </button>
       </form>
     </>
+  );
+}
+
+type FormInputProps = {
+  labelText: string;
+  id: string;
+  type: string;
+  placeholder: string;
+  value: string | number;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export function FormInput(props: FormInputProps) {
+  const { labelText, id, type, placeholder, value, onChange } = props;
+  return (
+    <div className="flex flex-col w-[47.5%]">
+      <label className=" text-white " htmlFor={id}>
+        {labelText}
+      </label>
+      <input
+        className="px-3 py-1 border rounded-md"
+        type={type}
+        id={id}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
   );
 }
 

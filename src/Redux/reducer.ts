@@ -1,33 +1,30 @@
-import { LAT, LON } from "./actions";
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  latitude: 59.95338836499352,
-  longitude: 30.306886328124797,
-};
+const coordsSlice = createSlice({
+  name: "coords",
+  initialState: {
+    latitude: 59.9533,
+    longitude: 30.3068,
+  },
+  reducers: {
+    latitude(state, action) {
+      console.log(
+        "%c reducer",
+        "background: green; color: white; display: block;",
+        action
+      );
+			state.latitude = action.payload
+    },
+    longitude(state, action) {
+      console.log(
+        "%c reducer",
+        "background: green; color: white; display: block;",
+        action
+      );
+			state.longitude = action.payload
+    },
+  },
+});
 
-export default function CoordsReducer(
-  state = initialState,
-  action: { type: any; payload: any }
-) {
-  console.log(
-    "%c reducer",
-    "background: green; color: white; display: block;",
-    action
-  );
-  switch (action.type) {
-    case LAT: {
-      return {
-        ...state,
-        latitude: action.payload,
-      };
-    }
-    case LON: {
-      return {
-        ...state,
-        longitude: action.payload,
-      };
-    }
-    default:
-      return state;
-  }
-}
+export const { latitude, longitude } = coordsSlice.actions;
+export default coordsSlice.reducer;

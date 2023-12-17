@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import CoordsReducer from "./reducer";
+import coordsSlice from "./reducer";
 export const store = configureStore({
-  reducer: CoordsReducer,
+  reducer: {
+		coords: coordsSlice,
+	},
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

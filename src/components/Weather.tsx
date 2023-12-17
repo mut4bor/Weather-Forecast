@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { IWeather } from "./WeatherTypes";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
@@ -18,6 +18,32 @@ type WeatherProps = {
 };
 
 const Weather = ({ data }: WeatherProps) => {
+  return (
+    <>
+      {data && (
+        <div className=" text-white mb-2 ">
+          <HeaderWeather data={data} />
+          <BodyWeather data={data} />
+          <FooterWeather data={data} />
+        </div>
+      )}
+    </>
+  );
+};
+
+export function HeaderWeather({ data }: WeatherProps) {
+  return (
+    <>
+      {data && (
+        <div className=" font-semibold ">
+          {data.name}, <Date />
+        </div>
+      )}
+    </>
+  );
+}
+
+export function BodyWeather({ data }: WeatherProps) {
   const [weatherIcon, setWeatherIcon] = useState("");
 
   const iconMap = {
@@ -48,49 +74,69 @@ const Weather = ({ data }: WeatherProps) => {
   };
 
   useEffect(weatherIconHandler, [data]);
-
   return (
-		//! Make this readable via components deviding
     <>
       {data && (
-        <div className=" text-white mb-2 ">
-          <div className=" font-semibold ">
-            {data.name}, <Date />
+        <div className="flex flex-row">
+          <div className=" h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
+            {Math.round(data.main.temp)}°
           </div>
-
-          <div className="flex flex-row">
-            <div className=" h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
-              {Math.round(data.main.temp)}°
-            </div>
-            <div className="w-[80px] h-[57px] object-cover">
-              <img className="h-[100%]" src={weatherIcon} />
-            </div>
-            <div className="flex flex-col">
-              <span>
-                {data.weather[0].description.charAt(0).toUpperCase() +
-                  data.weather[0].description.slice(1)}
-              </span>
-              <span>Ощущается как {Math.round(data.main.feels_like)}°</span>
-            </div>
+          <div className="w-[80px] h-[57px] object-cover">
+            <img className="h-[100%]" src={weatherIcon} />
           </div>
-          <div className="flex flex-row gap-5">
-            <div className="flex flex-row">
-              <svg className="w-[24px] h-[24px] mr-1 opacity-60">
-                <use href="#wind" />
-              </svg>
-              {data.wind.speed} м/с
-            </div>
-
-            <div className="flex flex-row">
-              <svg className="w-[24px] h-[24px] mr-1 opacity-60">
-                <use href="#humidity" />
-              </svg>
-              {data.main.humidity}%
-            </div>
+          <div className="flex flex-col">
+            <span>
+              {data.weather[0].description.charAt(0).toUpperCase() +
+                data.weather[0].description.slice(1)}
+            </span>
+            <span>Ощущается как {Math.round(data.main.feels_like)}°</span>
           </div>
         </div>
       )}
     </>
   );
+}
+export function FooterWeather({ data }: WeatherProps) {
+  return (
+    <>
+      {data && (
+        <div className="flex flex-row gap-5">
+          <FooterInfo
+            href={"#wind"}
+            dataElement={data.wind.speed}
+            measure={`м/с`}
+            spaceSymbol={true}
+          />
+          <FooterInfo
+            href={"#humidity"}
+            dataElement={data.main.humidity}
+            measure={"%"}
+            spaceSymbol={false}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
+type FooterInfoProps = {
+  href: string;
+  dataElement: number;
+  measure: string;
+  spaceSymbol: boolean;
 };
+
+export function FooterInfo(props: FooterInfoProps) {
+  return (
+    <div className="flex flex-row">
+      <svg className="w-[24px] h-[24px] mr-1 opacity-60">
+        <use href={props.href} />
+      </svg>
+      {props.dataElement}
+      {props.spaceSymbol == true ? " " : ""}
+      {props.measure}
+    </div>
+  );
+}
+
 export default Weather;
