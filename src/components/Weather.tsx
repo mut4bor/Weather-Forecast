@@ -69,7 +69,16 @@ export function BodyWeather({ data }: WeatherProps) {
 
   const weatherIconHandler = () => {
     if (data) {
-      setWeatherIcon(iconMap[data.weather[0].icon]);
+      var faviconLinkTagList = document.querySelectorAll(
+        'link[rel="icon"], link[rel="shortcut icon"]'
+      );
+      faviconLinkTagList.forEach(function (element) {
+        element.setAttribute("href", iconMap[data.weather[0].icon]);
+      });
+      document.title = `${data.name} – Weather Forecast by mut4bor`;
+      // document.title = `${data.name} ${Math.round(data.main.temp)}°`;
+
+			setWeatherIcon(iconMap[data.weather[0].icon]);
     }
   };
 

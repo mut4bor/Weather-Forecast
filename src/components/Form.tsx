@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { latitudeChanged, longitudeChanged } from "../redux/reducer";
 
 type FormProps = {
   onLatChange: (number: number) => void;
@@ -18,19 +19,13 @@ export default function Form(props: FormProps) {
 
   const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseCoordinate(event.target.value);
-    dispatch({
-      type: "coords/latitude",
-      payload: value,
-    });
+    dispatch(latitudeChanged(value));
     onLatChange(value);
   };
 
   const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const value = parseCoordinate(event.target.value)
-    dispatch({
-      type: "coords/longitude",
-      payload: value,
-    });
+    const value = parseCoordinate(event.target.value);
+    dispatch(longitudeChanged(value));
     onLonChange(value);
   };
 

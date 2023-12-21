@@ -1,13 +1,9 @@
 import { useRef, useEffect, useCallback, memo } from "react";
 import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-
+import { latitudeChanged, longitudeChanged } from "../redux/reducer";
 type GeoMapProps = {
   updateMapData: (array: [number, number]) => void;
-};
-
-type ChildGeoMapProps = {
-  handleDragCircle: (array: [number, number]) => void;
 };
 
 type GeoObject = {
@@ -19,9 +15,11 @@ type GeoObject = {
   };
 };
 
-export default memo(function GeoMap(props: GeoMapProps) {
-  const { updateMapData } = props;
+function GeoMap(props: GeoMapProps) {
   const dispatch = useAppDispatch();
+  const ref = useRef<GeoObject>();
+  const defaultCoordsLat = useAppSelector((state) => state.coords.latitude);
+  const defaultCoordsLon = useAppSelector((state) => state.coords.longitude);
 
   const handleDragCircle = useCallback((event: any) => {
     const { target } = event?.originalEvent ?? {};
@@ -29,36 +27,24 @@ export default memo(function GeoMap(props: GeoMapProps) {
       | [number, number]
       | undefined;
     if (coordinates) {
-      updateMapData(coordinates);
-      dispatch({ type: "coords/latitude", payload: coordinates[0].toFixed(4)});
-      dispatch({ type: "coords/longitude", payload: coordinates[1].toFixed(4)});
+      props.updateMapData(coordinates);
+      dispatch(latitudeChanged(coordinates[0].toFixed(4)));
+      dispatch(longitudeChanged(coordinates[1].toFixed(4)));
     }
   }, []);
 
-  return (
-    <>
-      <ChildGeoMap handleDragCircle={handleDragCircle} />
-    </>
-  );
-});
+  function handleCoordinates() {
+    if (ref.current) {
+      const circle = ref.current;
+      circle.events.add("dragend", handleDragCircle);
+    }
+  }
 
-function ChildGeoMap(props: ChildGeoMapProps) {
-  const defaultCoordsLat = useAppSelector((state) => state.coords.latitude);
-  const defaultCoordsLon = useAppSelector((state) => state.coords.longitude);
-
-  const ref = useRef<GeoObject>();
   useEffect(() => {
     setTimeout(() => {
       handleCoordinates();
     }, 1000);
   }, [ref.current]);
-
-  function handleCoordinates() {
-    if (ref.current) {
-      const circle = ref.current;
-      circle.events.add("dragend", props.handleDragCircle);
-    }
-  }
 
   return (
     <>
@@ -90,3 +76,5 @@ function ChildGeoMap(props: ChildGeoMapProps) {
     </>
   );
 }
+
+export default GeoMap;
