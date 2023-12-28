@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import coordsSlice from "./reducer";
+import coordsSlice from "./slices";
 export const store = configureStore({
   reducer: {
 		coords: coordsSlice,

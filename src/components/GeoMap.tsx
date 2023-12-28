@@ -1,10 +1,7 @@
-import { useRef, useEffect, useCallback, memo } from "react";
-import { YMaps, Map, Circle, RouteEditor } from "@pbe/react-yandex-maps";
+import { useRef, useEffect, useCallback } from "react";
+import { YMaps, Map, Circle } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { latitudeChanged, longitudeChanged } from "../redux/reducer";
-type GeoMapProps = {
-  updateMapData: (array: [number, number]) => void;
-};
+import { latitudeChanged, longitudeChanged } from "../redux/slices";
 
 type GeoObject = {
   events: {
@@ -15,7 +12,7 @@ type GeoObject = {
   };
 };
 
-function GeoMap(props: GeoMapProps) {
+function GeoMap() {
   const dispatch = useAppDispatch();
   const ref = useRef<GeoObject>();
   const defaultCoordsLat = useAppSelector((state) => state.coords.latitude);
@@ -27,7 +24,6 @@ function GeoMap(props: GeoMapProps) {
       | [number, number]
       | undefined;
     if (coordinates) {
-      props.updateMapData(coordinates);
       dispatch(latitudeChanged(coordinates[0].toFixed(4)));
       dispatch(longitudeChanged(coordinates[1].toFixed(4)));
     }
@@ -55,11 +51,18 @@ function GeoMap(props: GeoMapProps) {
             zoom: 9,
             controls: ["zoomControl", "fullscreenControl"],
           }}
-          modules={["control.ZoomControl", "control.FullscreenControl"]}
+          // state={{
+          //   center: [defaultCoordsLat, defaultCoordsLon],
+					// 	zoom: 9,
+          // }}
+          modules={[
+            "control.ZoomControl",
+            "control.FullscreenControl",
+            "control.SearchControl",
+          ]}
           width={"100%"}
           height={"100vh"}
         >
-          <RouteEditor />
           <Circle
             geometry={[[defaultCoordsLat, defaultCoordsLon], 12000]}
             options={{

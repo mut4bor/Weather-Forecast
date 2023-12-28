@@ -12,6 +12,7 @@ import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
 import Date from "../components/Date";
+import { useAppSelector } from "../redux/hooks";
 
 type WeatherProps = {
   data: IWeather | undefined;
@@ -32,6 +33,9 @@ const Weather = ({ data }: WeatherProps) => {
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
+
+	// const hqf = useAppSelector((state) => state.);
+
   return (
     <>
       {data && (
@@ -76,7 +80,6 @@ export function BodyWeather({ data }: WeatherProps) {
         element.setAttribute("href", iconMap[data.weather[0].icon]);
       });
       document.title = `${data.name} – Weather Forecast by mut4bor`;
-      // document.title = `${data.name} ${Math.round(data.main.temp)}°`;
 
 			setWeatherIcon(iconMap[data.weather[0].icon]);
     }

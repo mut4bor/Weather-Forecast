@@ -1,17 +1,16 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { latitudeChanged, longitudeChanged } from "../redux/reducer";
+import { latitudeChanged, longitudeChanged, fetchData } from "../redux/slices";
 
 type FormProps = {
   onLatChange: (number: number) => void;
   onLonChange: (number: number) => void;
-  apiCall: () => void;
 };
 
 export default function Form(props: FormProps) {
   const dispatch = useAppDispatch();
   const inputLat = useAppSelector((state) => state.coords.latitude);
   const inputLon = useAppSelector((state) => state.coords.longitude);
-  const { onLatChange, onLonChange, apiCall } = props;
+  const { onLatChange, onLonChange } = props;
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -53,7 +52,7 @@ export default function Form(props: FormProps) {
         <button
           type="submit"
           className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
-          onClick={apiCall}
+          onClick={() => dispatch(fetchData())}
         >
           Подтвердить
         </button>
