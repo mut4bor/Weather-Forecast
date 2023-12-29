@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { latitudeChanged, longitudeChanged, fetchData } from "../redux/slices";
+import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
+import { fetchData } from "../redux/weatherSlice";
 
 type FormProps = {
   onLatChange: (number: number) => void;

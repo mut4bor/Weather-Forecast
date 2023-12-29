@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import "./App.css";
 import Weather from "./components/Weather";
 import Form from "./components/Form";

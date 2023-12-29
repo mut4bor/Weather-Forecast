@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useAppSelector } from "../redux/hooks";
 import { IWeather } from "./WeatherTypes";
+import Date from "../components/Date";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
 import PartlyCloudyDay from "../icons/PartlyCloudy.png";
@@ -11,8 +13,8 @@ import Thunderstorm from "../icons/Thunderstorm.png";
 import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
-import Date from "../components/Date";
-import { useAppSelector } from "../redux/hooks";
+
+
 
 type WeatherProps = {
   data: IWeather | undefined;
@@ -23,7 +25,7 @@ const Weather = ({ data }: WeatherProps) => {
     <>
       {data && (
         <div className=" text-white mb-2 ">
-          <HeaderWeather data={data} />
+          <HeaderWeather />
           <BodyWeather data={data} />
           <FooterWeather data={data} />
         </div>
@@ -32,17 +34,15 @@ const Weather = ({ data }: WeatherProps) => {
   );
 };
 
-export function HeaderWeather({ data }: WeatherProps) {
+export function HeaderWeather() {
 
-	// const hqf = useAppSelector((state) => state.);
+	const cityName = useAppSelector(state => state.weather.data.name)
 
   return (
     <>
-      {data && (
-        <div className=" font-semibold ">
-          {data.name}, <Date />
-        </div>
-      )}
+      <div className=" font-semibold ">
+        {cityName}, <Date />
+      </div>
     </>
   );
 }
@@ -81,7 +81,7 @@ export function BodyWeather({ data }: WeatherProps) {
       });
       document.title = `${data.name} – Weather Forecast by mut4bor`;
 
-			setWeatherIcon(iconMap[data.weather[0].icon]);
+      setWeatherIcon(iconMap[data.weather[0].icon]);
     }
   };
 
