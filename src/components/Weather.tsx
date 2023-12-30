@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../reduxfiles/hooks";
 import Date from "../components/Date";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
@@ -14,7 +14,7 @@ import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
 import { IWeather } from "./WeatherTypes";
 
-type weatherProps = {
+type WeatherProps = {
   data: IWeather | undefined;
 };
 
@@ -31,7 +31,7 @@ const Weather = () => {
   );
 };
 
-export function HeaderWeather({ data }: weatherProps) {
+export function HeaderWeather({ data }: WeatherProps) {
   return (
     <>
       {data && (
@@ -43,7 +43,7 @@ export function HeaderWeather({ data }: weatherProps) {
   );
 }
 
-export function BodyWeather({ data }: weatherProps) {
+export function BodyWeather({ data }: WeatherProps) {
   const iconMap = {
     "01d": ClearDay,
     "01n": ClearNight,
@@ -101,7 +101,7 @@ export function BodyWeather({ data }: weatherProps) {
     </>
   );
 }
-export function FooterWeather({ data }: weatherProps) {
+export function FooterWeather({ data }: WeatherProps) {
   return (
     <>
       {data && (

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IWeather } from "../components/WeatherTypes";
 
-// Передаем координаты как параметры функции
 export const fetchData = createAsyncThunk("weather/fetchData", async (coords: { latitude: number; longitude: number }) => {
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
