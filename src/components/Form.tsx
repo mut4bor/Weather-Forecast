@@ -1,6 +1,6 @@
-import { useAppDispatch, useAppSelector } from "../reduxfiles/hooks";
-import { latitudeChanged, longitudeChanged } from "../reduxfiles/coordsSlice";
-import { fetchData } from "../reduxfiles/weatherSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
+import { fetchData } from "../redux/weatherSlice";
 import { useEffect } from "react";
 export default function Form() {
   const dispatch = useAppDispatch();

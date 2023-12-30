@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { YMaps, Map, Circle } from "@pbe/react-yandex-maps";
-import { useAppDispatch, useAppSelector } from "../reduxfiles/hooks";
-import { latitudeChanged, longitudeChanged } from "../reduxfiles/coordsSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
 
 type GeoObject = {
   events: {

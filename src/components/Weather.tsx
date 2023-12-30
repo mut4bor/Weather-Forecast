@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../reduxfiles/hooks";
+import { useAppSelector } from "../redux/hooks";
 import Date from "../components/Date";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
