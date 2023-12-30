@@ -1,7 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { fetchData } from "../redux/weatherSlice";
-import { useEffect } from "react";
+
 export default function Form() {
   const dispatch = useAppDispatch();
   const coords = useAppSelector((state) => state.coords);
@@ -38,7 +37,7 @@ export default function Form() {
             }}
           />
         </div>
-        <button
+        {/* <button
           type="submit"
           className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
           onClick={() => {
@@ -51,7 +50,7 @@ export default function Form() {
           }}
         >
           Подтвердить
-        </button>
+        </button> */}
       </form>
     </>
   );

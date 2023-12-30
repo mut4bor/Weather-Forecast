@@ -49,17 +49,9 @@ function GeoMap() {
           defaultState={{
             center: [defaultCoordsLat, defaultCoordsLon],
             zoom: 9,
-            controls: ["zoomControl", "fullscreenControl"],
+            controls: ["zoomControl"],
           }}
-          // state={{
-          //   center: [defaultCoordsLat, defaultCoordsLon],
-					// 	zoom: 9,
-          // }}
-          modules={[
-            "control.ZoomControl",
-            "control.FullscreenControl",
-            "control.SearchControl",
-          ]}
+          modules={["control.ZoomControl"]}
           width={"100%"}
           height={"100vh"}
         >

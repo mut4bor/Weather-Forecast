@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useAppSelector } from "../redux/hooks";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import Date from "../components/Date";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
@@ -12,7 +12,8 @@ import Thunderstorm from "../icons/Thunderstorm.png";
 import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
-import { IWeather } from "./WeatherTypes";
+import { IWeather } from "../redux/weatherTypes";
+import { fetchData } from "../redux/weatherSlice";
 
 type WeatherProps = {
   data: IWeather | undefined;
@@ -20,9 +21,20 @@ type WeatherProps = {
 
 const Weather = () => {
   const data = useAppSelector((state) => state.weather.data);
+  const coords = useAppSelector((state) => state.coords);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(
+      fetchData({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      })
+    );
+  }, [coords]);
+
   return (
     <>
-      <div className=" text-white mb-2 ">
+      <div className=" text-white ">
         <HeaderWeather data={data} />
         <BodyWeather data={data} />
         <FooterWeather data={data} />
@@ -36,7 +48,7 @@ export function HeaderWeather({ data }: WeatherProps) {
     <>
       {data && (
         <div className=" font-semibold ">
-          {data.name}, <Date />
+          {data.name.charAt(0).toUpperCase() + data.name.slice(1)}, <Date />
         </div>
       )}
     </>

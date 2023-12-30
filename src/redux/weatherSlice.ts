@@ -1,26 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { IWeather } from "../components/WeatherTypes";
+import { IWeather } from "./weatherTypes";
 
-export const fetchData = createAsyncThunk("weather/fetchData", async (coords: { latitude: number; longitude: number }) => {
-  const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
+export const fetchData = createAsyncThunk(
+  "weather/fetchData",
+  async (coords: { latitude: number; longitude: number }) => {
+    const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather
-                  ?lat=${coords.latitude}
-                  &lon=${coords.longitude}
-                  &appid=${apiKey}
-                  &units=metric
-                  &lang=ru`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather
+										?lat=${coords.latitude}
+										&lon=${coords.longitude}
+										&appid=${apiKey}
+										&units=metric
+										&lang=ru`;
+    const parsedApiUrl = apiUrl.replace(/\s+/g, "");
 
-  const response = await fetch(apiUrl);
-  const data = await response.json();
-  console.log(data);
-  return data;
-});
+    const response = await fetch(parsedApiUrl);
+    const data = await response.json();
+    return data;
+  }
+);
 
-interface IWeatherSlice {
+type IWeatherSlice = {
   data: IWeather | undefined;
   loading: "idle" | "pending" | "succeeded" | "failed";
-}
+};
 
 const weatherSlice = createSlice({
   name: "weather",

@@ -29,5 +29,3 @@ const coordsSlice = createSlice({
 
 export const { latitudeChanged, longitudeChanged } = coordsSlice.actions;
 export default coordsSlice.reducer;
-
-

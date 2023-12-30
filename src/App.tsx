@@ -6,7 +6,7 @@ import GeoMap from "./components/GeoMap";
 function App() {
   return (
     <>
-      <div className=" p-6 flex flex-col flex-wrap absolute z-50 bg-[#101d29] rounded-lg right-[10px] top-[10px]">
+      <div className=" p-6 flex flex-col flex-wrap absolute z-50 bg-[#101d29] gap-2 rounded-lg right-[10px] top-[10px]">
         <Weather />
         <Form />
       </div>
