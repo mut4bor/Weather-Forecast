@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAppSelector } from "../redux/hooks";
-import { IWeather } from "./WeatherTypes";
 import Date from "../components/Date";
 import ClearDay from "../icons/Clear.png";
 import ClearNight from "../icons/MostlyClearNight.png";
@@ -13,43 +12,38 @@ import Thunderstorm from "../icons/Thunderstorm.png";
 import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
+import { IWeather } from "./WeatherTypes";
 
-
-
-type WeatherProps = {
+type weatherProps = {
   data: IWeather | undefined;
 };
 
-const Weather = ({ data }: WeatherProps) => {
+const Weather = () => {
+  const data = useAppSelector((state) => state.weather.data);
+  return (
+    <>
+      <div className=" text-white mb-2 ">
+        <HeaderWeather data={data} />
+        <BodyWeather data={data} />
+        <FooterWeather data={data} />
+      </div>
+    </>
+  );
+};
+
+export function HeaderWeather({ data }: weatherProps) {
   return (
     <>
       {data && (
-        <div className=" text-white mb-2 ">
-          <HeaderWeather />
-          <BodyWeather data={data} />
-          <FooterWeather data={data} />
+        <div className=" font-semibold ">
+          {data.name}, <Date />
         </div>
       )}
     </>
   );
-};
-
-export function HeaderWeather() {
-
-	const cityName = useAppSelector(state => state.weather.data.name)
-
-  return (
-    <>
-      <div className=" font-semibold ">
-        {cityName}, <Date />
-      </div>
-    </>
-  );
 }
 
-export function BodyWeather({ data }: WeatherProps) {
-  const [weatherIcon, setWeatherIcon] = useState("");
-
+export function BodyWeather({ data }: weatherProps) {
   const iconMap = {
     "01d": ClearDay,
     "01n": ClearNight,
@@ -73,15 +67,14 @@ export function BodyWeather({ data }: WeatherProps) {
 
   const weatherIconHandler = () => {
     if (data) {
-      var faviconLinkTagList = document.querySelectorAll(
+      const faviconLinkTagList = document.querySelectorAll(
         'link[rel="icon"], link[rel="shortcut icon"]'
       );
       faviconLinkTagList.forEach(function (element) {
         element.setAttribute("href", iconMap[data.weather[0].icon]);
       });
-      document.title = `${data.name} – Weather Forecast by mut4bor`;
 
-      setWeatherIcon(iconMap[data.weather[0].icon]);
+      document.title = `${data.name} – Weather Forecast by mut4bor`;
     }
   };
 
@@ -94,7 +87,7 @@ export function BodyWeather({ data }: WeatherProps) {
             {Math.round(data.main.temp)}°
           </div>
           <div className="w-[80px] h-[57px] object-cover">
-            <img className="h-[100%]" src={weatherIcon} />
+            <img className="h-[100%]" src={iconMap[data.weather[0].icon]} />
           </div>
           <div className="flex flex-col">
             <span>
@@ -108,7 +101,7 @@ export function BodyWeather({ data }: WeatherProps) {
     </>
   );
 }
-export function FooterWeather({ data }: WeatherProps) {
+export function FooterWeather({ data }: weatherProps) {
   return (
     <>
       {data && (
@@ -116,14 +109,14 @@ export function FooterWeather({ data }: WeatherProps) {
           <FooterInfo
             href={"#wind"}
             dataElement={data.wind.speed}
-            measure={`м/с`}
             spaceSymbol={true}
+            measure={`м/с`}
           />
           <FooterInfo
             href={"#humidity"}
             dataElement={data.main.humidity}
-            measure={"%"}
             spaceSymbol={false}
+            measure={"%"}
           />
         </div>
       )}

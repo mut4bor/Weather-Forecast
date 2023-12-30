@@ -1,59 +1,54 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
 import { fetchData } from "../redux/weatherSlice";
-
-type FormProps = {
-  onLatChange: (number: number) => void;
-  onLonChange: (number: number) => void;
-};
-
-export default function Form(props: FormProps) {
+import { useEffect } from "react";
+export default function Form() {
   const dispatch = useAppDispatch();
-  const inputLat = useAppSelector((state) => state.coords.latitude);
-  const inputLon = useAppSelector((state) => state.coords.longitude);
-  const { onLatChange, onLonChange } = props;
-
-  const submitHandler = (event: React.FormEvent) => {
-    event.preventDefault();
-  };
-
-  const changeLatHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseCoordinate(event.target.value);
-    dispatch(latitudeChanged(value));
-    onLatChange(value);
-  };
-
-  const changeLonHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseCoordinate(event.target.value);
-    dispatch(longitudeChanged(value));
-    onLonChange(value);
-  };
+  const coords = useAppSelector((state) => state.coords);
 
   return (
     <>
-      <form className="flex flex-col" onSubmit={submitHandler}>
+      <form
+        className="flex flex-col"
+        onSubmit={(event: React.FormEvent) => {
+          event.preventDefault();
+        }}
+      >
         <div className="flex flex-wrap justify-between">
           <FormInput
             labelText={"Широта"}
             id={"lat"}
             type={"number"}
             placeholder={"Введите широту"}
-            value={inputLat}
-            onChange={changeLatHandler}
+            value={coords.latitude}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const value = parseCoordinate(event.target.value);
+              dispatch(latitudeChanged(value));
+            }}
           />
           <FormInput
             labelText={"Долгота"}
             id={"lon"}
             type={"number"}
             placeholder={"Введите долготу"}
-            value={inputLon}
-            onChange={changeLonHandler}
+            value={coords.longitude}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const value = parseCoordinate(event.target.value);
+              dispatch(longitudeChanged(value));
+            }}
           />
         </div>
         <button
           type="submit"
           className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
-          onClick={() => dispatch(fetchData())}
+          onClick={() => {
+            dispatch(
+              fetchData({
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+              })
+            );
+          }}
         >
           Подтвердить
         </button>

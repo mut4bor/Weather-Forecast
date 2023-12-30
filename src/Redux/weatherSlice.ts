@@ -1,15 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IWeather } from "../components/WeatherTypes";
-import { useAppSelector } from "./hooks";
 
-export const fetchData = createAsyncThunk("weather/fetchData", async () => {
+// Передаем координаты как параметры функции
+export const fetchData = createAsyncThunk("weather/fetchData", async (coords: { latitude: number; longitude: number }) => {
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
-  const latitude = useAppSelector((state) => state.coords.latitude);
-  const longitude = useAppSelector((state) => state.coords.longitude);
 
   const apiUrl = `https://api.openweathermap.org/data/2.5/weather
-                  ?lat=${latitude}
-                  &lon=${longitude}
+                  ?lat=${coords.latitude}
+                  &lon=${coords.longitude}
                   &appid=${apiKey}
                   &units=metric
                   &lang=ru`;
@@ -21,23 +19,22 @@ export const fetchData = createAsyncThunk("weather/fetchData", async () => {
 });
 
 interface IWeatherSlice {
-  data: IWeather;
-	loading: "idle" | "pending" | "succeeded" | "failed";
-};
+  data: IWeather | undefined;
+  loading: "idle" | "pending" | "succeeded" | "failed";
+}
 
 const weatherSlice = createSlice({
   name: "weather",
   initialState: {
-		loading: 'idle'
+    loading: "idle",
   } as IWeatherSlice,
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchData.fulfilled, (state, action) => {
       state.loading = "succeeded";
-      state = action.payload;
+      state.data = action.payload;
     });
   },
 });
-
 
 export default weatherSlice.reducer;
