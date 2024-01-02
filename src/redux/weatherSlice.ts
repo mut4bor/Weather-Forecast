@@ -15,6 +15,7 @@ export const fetchData = createAsyncThunk(
     const parsedApiUrl = apiUrl.replace(/\s+/g, "");
 
     const response = await fetch(parsedApiUrl);
+		console.log('api call')
     const data = await response.json();
     return data;
   }

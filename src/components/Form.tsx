@@ -1,9 +1,13 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
+import { useState } from "react";
 
 export default function Form() {
   const dispatch = useAppDispatch();
   const coords = useAppSelector((state) => state.coords);
+	const [inputLat, setInputLat] = useState(coords.latitude.toString())
+	const [inputLon, setInputLon] = useState(coords.longitude.toString())
+
 
   return (
     <>
@@ -17,10 +21,11 @@ export default function Form() {
           <FormInput
             labelText={"Широта"}
             id={"lat"}
-            type={"number"}
+            type={"text"}
             placeholder={"Введите широту"}
-            value={coords.latitude}
+            value={inputLat}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+							setInputLat(event.target.value)
               const value = parseCoordinate(event.target.value);
               dispatch(latitudeChanged(value));
             }}
@@ -28,29 +33,16 @@ export default function Form() {
           <FormInput
             labelText={"Долгота"}
             id={"lon"}
-            type={"number"}
+            type={"text"}
             placeholder={"Введите долготу"}
-            value={coords.longitude}
+            value={inputLon}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+							setInputLon(event.target.value)
               const value = parseCoordinate(event.target.value);
               dispatch(longitudeChanged(value));
             }}
           />
         </div>
-        {/* <button
-          type="submit"
-          className=" border px-5 py-1 mt-3 text-white font-bold rounded-md"
-          onClick={() => {
-            dispatch(
-              fetchData({
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-              })
-            );
-          }}
-        >
-          Подтвердить
-        </button> */}
       </form>
     </>
   );

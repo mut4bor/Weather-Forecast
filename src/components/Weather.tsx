@@ -14,6 +14,7 @@ import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
 import { IWeather } from "../redux/weatherTypes";
 import { fetchData } from "../redux/weatherSlice";
+import _ from "lodash";
 
 type WeatherProps = {
   data: IWeather | undefined;
@@ -23,13 +24,22 @@ const Weather = () => {
   const data = useAppSelector((state) => state.weather.data);
   const coords = useAppSelector((state) => state.coords);
   const dispatch = useAppDispatch();
-  useEffect(() => {
+
+  const dispatchData = () => {
     dispatch(
       fetchData({
         latitude: coords.latitude,
         longitude: coords.longitude,
       })
     );
+  };
+
+  useEffect(() => {
+    const debouncedFetchData = _.debounce(dispatchData, 500);
+    debouncedFetchData();
+    return () => {
+      debouncedFetchData.cancel();
+    };
   }, [coords]);
 
   return (
