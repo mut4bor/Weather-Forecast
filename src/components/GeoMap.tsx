@@ -2,7 +2,8 @@ import { useRef, useEffect, useCallback, useState } from "react";
 import { YMaps, Map, Circle } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { Children } from "react";
+import { max, min } from "lodash";
+import { SearchControl, ZoomControl } from "react-yandex-maps";
 
 type GeoObject = {
   events: {
@@ -49,7 +50,9 @@ function GeoMap() {
   return (
     <>
       <div
-        className={`${pageBlurBoolean ? "blur pointer-events-none" : ""} transition duration-300ms`}
+        className={`${
+          pageBlurBoolean ? "blur pointer-events-none" : ""
+        } transition ease-out`}
       >
         <YMaps>
           <Map
@@ -62,6 +65,10 @@ function GeoMap() {
               center: [mapCoords.latitude, mapCoords.longitude],
               zoom: 9,
             }}
+						options={{
+							minZoom: 3,
+							maxZoom: 23,
+						}}
             modules={["control.ZoomControl"]}
             width={"100%"}
             height={"100vh"}

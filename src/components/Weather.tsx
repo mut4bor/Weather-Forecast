@@ -33,7 +33,7 @@ const Weather = () => {
       })
     );
   };
-
+	
   useEffect(() => {
     const debouncedFetchData = _.debounce(dispatchData, 500);
     debouncedFetchData();

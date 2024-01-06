@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
 import { inputLatitudeChanged, inputLongitudeChanged } from "../redux/mapSlice";
+import { parseCoordinate } from "./parseCoordinate";
 
 export default function Form() {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export default function Form() {
             id={"lat"}
             type={"text"}
             placeholder={"Введите широту"}
-            value={coords.latitude}
+            value={coords.latitude !== 0 ? coords.latitude : ""}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const value = parseCoordinate(event.target.value);
               dispatch(latitudeChanged(value));
@@ -32,7 +33,7 @@ export default function Form() {
             id={"lon"}
             type={"text"}
             placeholder={"Введите долготу"}
-            value={coords.longitude}
+            value={coords.longitude !== 0 ? coords.longitude : ""}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const value = parseCoordinate(event.target.value);
               dispatch(longitudeChanged(value));
@@ -71,9 +72,4 @@ export function FormInput(props: FormInputProps) {
       />
     </div>
   );
-}
-
-export function parseCoordinate(string: string): number {
-  const result = parseFloat(string.trim());
-  return Number.isNaN(result) ? 0 : result;
 }
