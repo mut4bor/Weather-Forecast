@@ -1,13 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { useState } from "react";
+import { inputLatitudeChanged, inputLongitudeChanged } from "../redux/mapSlice";
 
 export default function Form() {
   const dispatch = useAppDispatch();
   const coords = useAppSelector((state) => state.coords);
-	const [inputLat, setInputLat] = useState(coords.latitude.toString())
-	const [inputLon, setInputLon] = useState(coords.longitude.toString())
-
 
   return (
     <>
@@ -23,11 +20,11 @@ export default function Form() {
             id={"lat"}
             type={"text"}
             placeholder={"Введите широту"}
-            value={inputLat}
+            value={coords.latitude}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-							setInputLat(event.target.value)
               const value = parseCoordinate(event.target.value);
               dispatch(latitudeChanged(value));
+              dispatch(inputLatitudeChanged(value));
             }}
           />
           <FormInput
@@ -35,11 +32,11 @@ export default function Form() {
             id={"lon"}
             type={"text"}
             placeholder={"Введите долготу"}
-            value={inputLon}
+            value={coords.longitude}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-							setInputLon(event.target.value)
               const value = parseCoordinate(event.target.value);
               dispatch(longitudeChanged(value));
+              dispatch(inputLongitudeChanged(value));
             }}
           />
         </div>
