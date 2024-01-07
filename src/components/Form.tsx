@@ -19,25 +19,28 @@ export default function Form() {
           <FormInput
             labelText={"Широта"}
             id={"lat"}
-            type={"text"}
             placeholder={"Введите широту"}
-            value={coords.latitude !== 0 ? coords.latitude : ""}
+            value={coords.latitude}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const value = parseCoordinate(event.target.value);
-              dispatch(latitudeChanged(value));
-              dispatch(inputLatitudeChanged(value));
+              if (value <= 90) {
+                dispatch(latitudeChanged(value));
+                dispatch(inputLatitudeChanged(value));
+              }
             }}
           />
           <FormInput
             labelText={"Долгота"}
             id={"lon"}
-            type={"text"}
             placeholder={"Введите долготу"}
             value={coords.longitude !== 0 ? coords.longitude : ""}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const value = parseCoordinate(event.target.value);
-              dispatch(longitudeChanged(value));
-              dispatch(inputLongitudeChanged(value));
+							if (value <= 180) {
+								dispatch(longitudeChanged(value));
+								dispatch(inputLongitudeChanged(value));
+							}
+              
             }}
           />
         </div>
@@ -49,14 +52,13 @@ export default function Form() {
 type FormInputProps = {
   labelText: string;
   id: string;
-  type: string;
   placeholder: string;
   value: string | number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export function FormInput(props: FormInputProps) {
-  const { labelText, id, type, placeholder, value, onChange } = props;
+  const { labelText, id, placeholder, value, onChange } = props;
   return (
     <div className="flex flex-col w-[47.5%]">
       <label className=" text-white " htmlFor={id}>
@@ -64,7 +66,8 @@ export function FormInput(props: FormInputProps) {
       </label>
       <input
         className="px-3 py-1 border rounded-md"
-        type={type}
+        type="number"
+				autoComplete="off"
         id={id}
         placeholder={placeholder}
         value={value}

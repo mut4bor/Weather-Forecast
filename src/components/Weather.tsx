@@ -33,7 +33,7 @@ const Weather = () => {
       })
     );
   };
-	
+
   useEffect(() => {
     const debouncedFetchData = _.debounce(dispatchData, 500);
     debouncedFetchData();
@@ -54,6 +54,15 @@ const Weather = () => {
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
+  if (data && data.name == "") {
+    return (
+      <div>
+        <div className=" font-semibold ">
+          <Date />
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       {data && (
