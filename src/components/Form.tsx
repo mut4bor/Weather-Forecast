@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { inputLatitudeChanged, inputLongitudeChanged } from "../redux/mapSlice";
+import { mapLatitudeChanged, mapLongitudeChanged } from "../redux/mapSlice";
 import { parseCoordinate } from "./parseCoordinate";
 
 export default function Form() {
@@ -25,7 +25,7 @@ export default function Form() {
               const value = parseCoordinate(event.target.value);
               if (value <= 90) {
                 dispatch(latitudeChanged(value));
-                dispatch(inputLatitudeChanged(value));
+                dispatch(mapLatitudeChanged(value));
               }
             }}
           />
@@ -38,7 +38,7 @@ export default function Form() {
               const value = parseCoordinate(event.target.value);
 							if (value <= 180) {
 								dispatch(longitudeChanged(value));
-								dispatch(inputLongitudeChanged(value));
+								dispatch(mapLongitudeChanged(value));
 							}
               
             }}

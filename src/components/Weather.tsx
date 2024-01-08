@@ -104,7 +104,10 @@ export function BodyWeather({ data }: WeatherProps) {
       faviconLinkTagList.forEach(function (element) {
         element.setAttribute("href", iconMap[data.weather[0].icon]);
       });
-
+      if (data.name == "") {
+        document.title = `Weather Forecast by mut4bor`;
+        return;
+      }
       document.title = `${data.name} – Weather Forecast by mut4bor`;
     }
   };

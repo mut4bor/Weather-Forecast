@@ -9,14 +9,14 @@ const mapSlice = createSlice({
   },
 
   reducers: {
-    inputLatitudeChanged(state, action) {
+    mapLatitudeChanged(state, action) {
       state.latitude = action.payload;
     },
-    inputLongitudeChanged(state, action) {
+    mapLongitudeChanged(state, action) {
       state.longitude = action.payload;
     },
   },
 });
 
-export const { inputLatitudeChanged, inputLongitudeChanged } = mapSlice.actions;
+export const { mapLatitudeChanged, mapLongitudeChanged } = mapSlice.actions;
 export default mapSlice.reducer;
