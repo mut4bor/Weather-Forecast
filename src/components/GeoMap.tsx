@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo, memo } from "react";
 import { YMaps, Map, Circle } from "@pbe/react-yandex-maps";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
@@ -8,12 +8,9 @@ type GeoObject = {
   events: {
     add: Function;
   };
-  geometry: {
-    getCoordinates: () => [number, number];
-  };
 };
 
-function GeoMap() {
+export default function GeoMap() {
   const dispatch = useAppDispatch();
   const circleRef = useRef<GeoObject>();
   const mapRef = useRef<GeoObject>();
@@ -23,12 +20,11 @@ function GeoMap() {
   const mapCoords = useAppSelector((state) => state.map);
   const [pageBlurBoolean, setPageBlurBoolean] = useState(true);
 
-  const handleDragCircle = useCallback((event: any) => {
+  const handleCircleDrag = useCallback((event: any) => {
     const { target } = event?.originalEvent ?? {};
     const coordinates = target?.geometry?.getCoordinates() as
       | [number, number]
       | undefined;
-    console.log(coordinates);
 
     if (coordinates) {
       dispatch(latitudeChanged(coordinates[0]));
@@ -36,38 +32,39 @@ function GeoMap() {
     }
   }, []);
 
-  function handleCoordinates() {
+  function handleCircle() {
     if (circleRef.current) {
       const circle = circleRef.current;
-      circle.events.add("dragend", handleDragCircle);
+      circle.events.add("dragend", handleCircleDrag);
     }
   }
 
-  const handleDragMap = useCallback((event: any) => {
+  const handleMapDrag = useCallback((event: any) => {
     const { target } = event?.originalEvent ?? {};
-    const coordinates = target?.getCenter() as [number, number] | undefined;
-    console.log(coordinates);
-
-    if (coordinates) {
-      dispatch(mapLatitudeChanged(coordinates[0]));
-      dispatch(mapLongitudeChanged(coordinates[1]));
+    const center = target?.getCenter() as [number, number] | undefined;
+    if (center) {
+      dispatch(mapLatitudeChanged(center[0]));
+      dispatch(mapLongitudeChanged(center[1]));
     }
+		console.log("boundschange");
   }, []);
 
   function handleMap() {
     if (mapRef.current) {
       const map = mapRef.current;
-      map.events.add("actionend", handleDragMap);
+      map.events.add("boundschange", handleMapDrag);
     }
   }
-
   useEffect(() => {
     setTimeout(() => {
-      setPageBlurBoolean(false);
+      handleCircle();
       handleMap();
-      handleCoordinates();
     }, 1000);
   }, [circleRef.current, mapRef.current]);
+
+  useEffect(() => {
+    setTimeout(() => setPageBlurBoolean(false), 1000);
+  }, []);
 
   return (
     <>
@@ -79,21 +76,21 @@ function GeoMap() {
         <YMaps>
           <Map
             defaultState={{
-              center: [defaultCoordsLat, defaultCoordsLon],
+              center: [mapCoords.latitude, mapCoords.longitude],
               zoom: 9,
               controls: ["zoomControl"],
             }}
-            state={{
-              center: [mapCoords.latitude, mapCoords.longitude],
+						state={{
+							center: [mapCoords.latitude, mapCoords.longitude],
               zoom: 9,
-            }}
+						}}
             options={{
               minZoom: 3,
               maxZoom: 23,
             }}
             modules={["control.ZoomControl"]}
             width={"100%"}
-            height={"100vh"}
+            height={"100svh"}
             instanceRef={mapRef as any}
           >
             <Circle
@@ -113,5 +110,3 @@ function GeoMap() {
     </>
   );
 }
-
-export default GeoMap;

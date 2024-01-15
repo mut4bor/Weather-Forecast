@@ -33,7 +33,7 @@ export default function Form() {
             labelText={"Долгота"}
             id={"lon"}
             placeholder={"Введите долготу"}
-            value={coords.longitude !== 0 ? coords.longitude : ""}
+            value={coords.longitude}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const value = parseCoordinate(event.target.value);
 							if (value <= 180) {
