@@ -4,19 +4,18 @@ const mapSlice = createSlice({
   name: "map",
 
   initialState: {
-    latitude: 59.9533,
-    longitude: 30.3068,
+    center: false
   },
 
   reducers: {
-    mapLatitudeChanged(state, action) {
-      state.latitude = action.payload;
+    shouldCenter(state) {
+      state.center = true;
     },
-    mapLongitudeChanged(state, action) {
-      state.longitude = action.payload;
+    shouldNotCenter(state) {
+      state.center = false;
     },
   },
 });
 
-export const { mapLatitudeChanged, mapLongitudeChanged } = mapSlice.actions;
+export const { shouldCenter, shouldNotCenter } = mapSlice.actions;
 export default mapSlice.reducer;
