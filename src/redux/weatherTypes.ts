@@ -44,3 +44,17 @@ export interface IWeather {
 	name: string;
 	cod: number;
 }
+
+export interface IWeatherError {
+  cod: number;
+  message: string;
+}
+
+// Export type for successfull and failure API responses
+export type WeatherAPIResponse = IWeather | IWeatherError;
+
+// Type guards. More info here: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+// Only one type guard for errors, let's thinks that all requests are successfull by default
+export function isErrorResponse(data: WeatherAPIResponse): data is IWeatherError {
+  return (data as IWeatherError).cod !== undefined;
+}

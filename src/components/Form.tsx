@@ -1,11 +1,13 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { mapLatitudeChanged, mapLongitudeChanged } from "../redux/mapSlice";
+import {shouldCenter} from '../redux/mapSlice';
 import { parseCoordinate } from "./parseCoordinate";
+
+const textInputRegexp = /^[0-9.]*$/;
 
 export default function Form() {
   const dispatch = useAppDispatch();
-  const coords = useAppSelector((state) => state.coords);
+  const { latitude, longitude } = useAppSelector((state) => state.coords);
 
   return (
     <>
@@ -17,30 +19,42 @@ export default function Form() {
       >
         <div className="flex flex-wrap justify-between">
           <FormInput
-            labelText={"Широта"}
-            id={"lat"}
-            placeholder={"Введите широту"}
-            value={coords.latitude}
+            labelText="Широта"
+            id="lat"
+            placeholder="Введите широту"
+            value={latitude ?? ""}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const { value: fieldValue } = event.target
+              if (!fieldValue) {
+                dispatch(latitudeChanged(fieldValue));
+                return;
+              }
+              if (!textInputRegexp.test(fieldValue)) return
               const value = parseCoordinate(event.target.value);
               if (value <= 90) {
-                dispatch(latitudeChanged(value));
-                dispatch(mapLatitudeChanged(value));
+                dispatch(latitudeChanged(fieldValue));
+                dispatch(shouldCenter())
               }
             }}
           />
           <FormInput
-            labelText={"Долгота"}
-            id={"lon"}
-            placeholder={"Введите долготу"}
-            value={coords.longitude}
+            labelText="Долгота"
+            id="lon"
+            placeholder="Введите долготу"
+            value={longitude ?? ""}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              const value = parseCoordinate(event.target.value);
+              const {value: fieldValue} = event.target
+              if (!fieldValue) {
+                dispatch(longitudeChanged(fieldValue));
+                return;
+              }
+              // Here we are checking that string in the input value have only digits or '.' sign as decimal point.
+              if (!textInputRegexp.test(fieldValue)) return
+              const value = parseCoordinate(fieldValue);
 							if (value <= 180) {
-								dispatch(longitudeChanged(value));
-								dispatch(mapLongitudeChanged(value));
+                dispatch(longitudeChanged(fieldValue));
+                dispatch(shouldCenter())
 							}
-              
             }}
           />
         </div>
@@ -66,12 +80,17 @@ export function FormInput(props: FormInputProps) {
       </label>
       <input
         className="px-3 py-1 border rounded-md"
-        type="number"
 				autoComplete="off"
         id={id}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onKeyUp={({key}) => {
+          if (key === 'ArrowUp' || key === 'ArrowDown' ) {
+            // You know what to do here 😉
+            console.log('%c the key code -->', 'background: tomato; color: white; display: block;', key);
+          }
+        }}
       />
     </div>
   );
