@@ -1,40 +1,40 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 const changeLog = (action: any) => {
-  console.log(
-    "%c reducer",
-    "background: green; color: white; display: block;",
-    action
-  );
+	console.log(
+		'%c reducer',
+		'background: green; color: white; display: block;',
+		action
+	);
 };
 
 const coordsSlice = createSlice({
-  name: "coords",
+	name: 'coords',
 
-  initialState: {
-    latitude: '59.9533',
-    longitude: '30.3068',
-  },
+	initialState: {
+		latitude: '59.9533',
+		longitude: '30.3068',
+	},
 
-  reducers: {
-    latitudeChanged(state, action: PayloadAction<string>) {
-      changeLog(action);
+	reducers: {
+		latitudeChanged(state, action: PayloadAction<string>) {
+			changeLog(action);
 
-      if (action.payload.toString().length >= 7) {
-        state.latitude = action.payload;
-        return;
-      }
-      state.latitude = action.payload;
-    },
-    longitudeChanged(state, action: PayloadAction<string>) {
-      changeLog(action);
+			if (action.payload.length >= 7) {
+				state.latitude = action.payload;
+				return;
+			}
+			state.latitude = action.payload;
+		},
+		longitudeChanged(state, action: PayloadAction<string>) {
+			changeLog(action);
 
-      if (action.payload.toString().length >= 7) {
-        state.longitude = action.payload;
-        return;
-      }
-      state.longitude = action.payload;
-    },
-  },
+			if (action.payload.length >= 7) {
+				state.longitude = action.payload;
+				return;
+			}
+			state.longitude = action.payload;
+		},
+	},
 });
 
 export const { latitudeChanged, longitudeChanged } = coordsSlice.actions;

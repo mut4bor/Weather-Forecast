@@ -1,20 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const mapSlice = createSlice({
-  name: "map",
+	name: 'map',
 
-  initialState: {
-    center: false
-  },
+	initialState: {
+		center: false,
+	},
 
-  reducers: {
-    shouldCenter(state) {
-      state.center = true;
-    },
-    shouldNotCenter(state) {
-      state.center = false;
-    },
-  },
+	reducers: {
+		shouldCenter(state) {
+			state.center = true;
+		},
+		shouldNotCenter(state) {
+			state.center = false;
+		},
+	},
 });
 
 export const { shouldCenter, shouldNotCenter } = mapSlice.actions;

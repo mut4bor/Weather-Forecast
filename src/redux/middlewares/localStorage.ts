@@ -1,12 +1,12 @@
-import { Middleware } from "redux";
+import { Middleware } from 'redux';
 
 const localStorageMiddleware: Middleware = (store) => (next) => (action) => {
-  const result = next(action);
-  const stateToSave = store.getState().coordsSlice
+	const result = next(action);
+	const stateToSave = store.getState().coordsSlice;
 
-  localStorage.setItem("weatherApp", JSON.stringify(stateToSave));
+	localStorage.setItem('weatherApp', JSON.stringify(stateToSave));
 
-  return result;
+	return result;
 };
 
 export default localStorageMiddleware;
