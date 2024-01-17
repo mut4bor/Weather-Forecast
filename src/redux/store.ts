@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import coordsSlice from "./coordsSlice";
-import weatherSlice from "./weatherSlice";
-import mapSlice from "./mapSlice";
+import coordsSlice from "./slices/coordsSlice";
+import weatherSlice from "./slices/weatherSlice";
+import mapSlice from "./slices/mapSlice";
 export const store = configureStore({
   reducer: {
     coords: coordsSlice,

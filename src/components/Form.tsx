@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { latitudeChanged, longitudeChanged } from "../redux/coordsSlice";
-import { mapLatitudeChanged, mapLongitudeChanged } from "../redux/mapSlice";
+import { latitudeChanged, longitudeChanged } from "../redux/slices/coordsSlice";
+import { mapLatitudeChanged, mapLongitudeChanged } from "../redux/slices/mapSlice";
 import { parseCoordinate } from "./parseCoordinate";
 
 export default function Form() {

@@ -13,8 +13,9 @@ import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
 import { IWeather } from "../redux/weatherTypes";
-import { fetchData } from "../redux/weatherSlice";
+import { fetchData } from "../redux/slices/weatherSlice";
 import _ from "lodash";
+import { RootState } from '../redux/store';
 
 type WeatherProps = {
   data: IWeather | undefined;
