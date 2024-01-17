@@ -12,13 +12,13 @@ import Thunderstorm from "../icons/Thunderstorm.png";
 import Rain from "../icons/Drizzle.png";
 import HeavyRain from "../icons/HeavyRain.png";
 import BrokenClouds from "../icons/Cloudy.png";
-import { IWeather } from "../redux/weatherTypes";
+import { WeatherAPIResponse, isErrorResponse } from "../redux/weatherTypes";
 import { fetchData } from "../redux/slices/weatherSlice";
 import _ from "lodash";
 import { RootState } from '../redux/store';
 
 type WeatherProps = {
-  data: IWeather | undefined;
+  data: WeatherAPIResponse | undefined;
 };
 
 const Weather = () => {
@@ -29,8 +29,8 @@ const Weather = () => {
   const dispatchData = () => {
     dispatch(
       fetchData({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
+        latitude: parseFloat(coords.latitude),
+        longitude: parseFloat(coords.longitude),
       })
     );
   };
@@ -55,6 +55,10 @@ const Weather = () => {
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
+  if (!data || isErrorResponse(data)) {
+    return <div>Error</div>;
+  }
+
   if (data && data.name == "") {
     return (
       <div>
@@ -98,22 +102,29 @@ export function BodyWeather({ data }: WeatherProps) {
   } as Record<string, string>;
 
   const weatherIconHandler = () => {
-    if (data) {
-      const faviconLinkTagList = document.querySelectorAll(
-        'link[rel="icon"], link[rel="shortcut icon"]'
-      );
-      faviconLinkTagList.forEach(function (element) {
-        element.setAttribute("href", iconMap[data.weather[0].icon]);
-      });
-      if (data.name == "") {
-        document.title = `Weather Forecast by mut4bor`;
-        return;
-      }
-      document.title = `${data.name} – Weather Forecast by mut4bor`;
+    if (!data || isErrorResponse(data)) {
+      return ;
     }
+
+    const faviconLinkTagList = document.querySelectorAll(
+      'link[rel="icon"], link[rel="shortcut icon"]'
+    );
+    faviconLinkTagList.forEach(function (element) {
+      element.setAttribute("href", iconMap[data.weather[0].icon]);
+    });
+    if (data.name == "") {
+      document.title = `Weather Forecast by mut4bor`;
+      return;
+    }
+    document.title = `${data.name} – Weather Forecast by mut4bor`;
   };
 
   useEffect(weatherIconHandler, [data]);
+
+  if (!data || isErrorResponse(data)) {
+    return <div>Error</div>;
+  }
+
   return (
     <>
       {data && (
@@ -137,6 +148,10 @@ export function BodyWeather({ data }: WeatherProps) {
   );
 }
 export function FooterWeather({ data }: WeatherProps) {
+  if (!data || isErrorResponse(data)) {
+    return null;
+  }
+
   return (
     <>
       {data && (
@@ -173,7 +188,7 @@ export function FooterInfo(props: FooterInfoProps) {
         <use href={props.href} />
       </svg>
       {props.dataElement}
-      {props.spaceSymbol == true ? " " : ""}
+      {!!props.spaceSymbol ? " " : ""}
       {props.measure}
     </div>
   );

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const changeLog = (action: any) => {
   console.log(
     "%c reducer",
@@ -11,12 +11,12 @@ const coordsSlice = createSlice({
   name: "coords",
 
   initialState: {
-    latitude: 59.9533,
-    longitude: 30.3068,
+    latitude: '59.9533',
+    longitude: '30.3068',
   },
 
   reducers: {
-    latitudeChanged(state, action) {
+    latitudeChanged(state, action: PayloadAction<string>) {
       changeLog(action);
 
       if (action.payload.toString().length >= 7) {
@@ -25,8 +25,7 @@ const coordsSlice = createSlice({
       }
       state.latitude = action.payload;
     },
-
-    longitudeChanged(state, action) {
+    longitudeChanged(state, action: PayloadAction<string>) {
       changeLog(action);
 
       if (action.payload.toString().length >= 7) {
