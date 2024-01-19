@@ -23,13 +23,12 @@ export default function GeoMap() {
 	const circleRef = useRef<GeoObject>();
 	const mapRef = useRef<MapObject>();
 
-	const defaultCoordsLat = useAppSelector((state) =>
+	const latitude = useAppSelector((state) =>
 		parseCoordinate(state.coords.latitude)
 	);
-	const defaultCoordsLon = useAppSelector((state) =>
+	const longitude = useAppSelector((state) =>
 		parseCoordinate(state.coords.longitude)
 	);
-	const mapCoords = useAppSelector((state) => state.coords);
 	const shouldCenter = useAppSelector((state) => state.map.center);
 	const [pageLoading, setPageLoading] = useState(true);
 
@@ -63,16 +62,9 @@ export default function GeoMap() {
 		if (!shouldCenter) return;
 		const map = mapRef.current;
 
-		map.setCenter(
-			[
-				parseCoordinate(mapCoords.latitude),
-				parseCoordinate(mapCoords.longitude),
-			],
-			9,
-			{
-				duration: 300,
-			}
-		);
+		map.setCenter([latitude, longitude], 9, {
+			duration: 300,
+		});
 
 		setTimeout(() => dispatch(shouldNotCenter()), 1000);
 	}, [mapRef.current, shouldCenter]);
@@ -91,10 +83,7 @@ export default function GeoMap() {
 				<YMaps>
 					<Map
 						defaultState={{
-							center: [
-								parseCoordinate(mapCoords.latitude),
-								parseCoordinate(mapCoords.longitude),
-							],
+							center: [latitude, longitude],
 							zoom: 9,
 							controls: ['zoomControl'],
 						}}
@@ -108,7 +97,7 @@ export default function GeoMap() {
 						instanceRef={mapRef as any}
 					>
 						<Circle
-							geometry={[[defaultCoordsLat, defaultCoordsLon], 12000]}
+							geometry={[[latitude, longitude], 12000]}
 							options={{
 								draggable: true,
 								fillColor: '#DB709377',

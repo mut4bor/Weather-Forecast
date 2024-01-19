@@ -4,7 +4,7 @@ const mapSlice = createSlice({
 	name: 'map',
 
 	initialState: {
-		center: false,
+		center: true,
 	},
 
 	reducers: {

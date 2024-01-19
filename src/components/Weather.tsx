@@ -15,6 +15,7 @@ import BrokenClouds from '../icons/Cloudy.png';
 import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
 import _ from 'lodash';
+import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
 
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
@@ -24,13 +25,34 @@ const Weather = () => {
 	const data = useAppSelector((state) => state.weather.data);
 	const coords = useAppSelector((state) => state.coords);
 	const dispatch = useAppDispatch();
+
 	const dispatchData = () => {
-		dispatch(
-			fetchData({
-				latitude: parseFloat(coords.latitude),
-				longitude: parseFloat(coords.longitude),
-			})
-		);
+		const storedData = localStorage.getItem('weatherApp');
+		const parsedData = storedData ? JSON.parse(storedData) : null;
+
+		const cachedLatitude = parsedData ? parsedData.latitude : null;
+		const cachedLongitude = parsedData ? parsedData.longitude : null;
+
+		if (cachedLatitude && cachedLongitude) {
+			dispatch(latitudeChanged(cachedLatitude));
+			dispatch(longitudeChanged(cachedLongitude));
+			dispatch(
+				fetchData({
+					latitude: parseFloat(cachedLatitude),
+					longitude: parseFloat(cachedLongitude),
+				})
+			);
+			return;
+		}
+
+		if (coords.latitude && coords.longitude) {
+			dispatch(
+				fetchData({
+					latitude: parseFloat(coords.latitude),
+					longitude: parseFloat(coords.longitude),
+				})
+			);
+		}
 	};
 
 	useEffect(() => {
@@ -41,20 +63,15 @@ const Weather = () => {
 		};
 	}, [coords]);
 
-	if (data && isErrorResponse(data)) {
-		return (
-			<>
-				<div className=" text-white ">
-					<div>Error {data.cod}</div>
-					<div>{data.message}</div>
-				</div>
-			</>
-		);
-	}
-
 	return (
 		<>
 			<div className=" text-white relative">
+				{data && isErrorResponse(data) && (
+					<>
+						<div>Error {data.cod}</div>
+						<div>{data.message}</div>
+					</>
+				)}
 				<HeaderWeather data={data} />
 				<BodyWeather data={data} />
 				<FooterWeather data={data} />

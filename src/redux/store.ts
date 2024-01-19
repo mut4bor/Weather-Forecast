@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import coordsSlice from './slices/coordsSlice';
+import coordsSlice, { middleware } from './slices/coordsSlice';
 import weatherSlice from './slices/weatherSlice';
 import mapSlice from './slices/mapSlice';
 export const store = configureStore({
@@ -8,6 +8,8 @@ export const store = configureStore({
 		weather: weatherSlice,
 		map: mapSlice,
 	},
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware().concat(middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

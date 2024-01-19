@@ -23,8 +23,9 @@ export default function Form() {
 						id="lat"
 						placeholder="Введите широту"
 						value={latitude ?? ''}
-						onKeyUp={() => {
-						}}
+						coordinate={latitude}
+						onArrowUp={() => {}}
+						onArrowDown={() => {}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -44,8 +45,9 @@ export default function Form() {
 						id="lon"
 						placeholder="Введите долготу"
 						value={longitude ?? ''}
-						onKeyUp={() => {
-						}}
+						coordinate={longitude}
+						onArrowUp={() => {}}
+						onArrowDown={() => {}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -73,34 +75,40 @@ type FormInputProps = {
 	placeholder: string;
 	value: string | number;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	onKeyUp: () => void;
+	onArrowUp: () => void;
+	onArrowDown: () => void;
+	coordinate: string;
 };
 
 export function FormInput(props: FormInputProps) {
-	const { labelText, id, placeholder, value, onChange, onKeyUp } = props;
-	const loadingState = useAppSelector((state) => state.weather.loading);
 	return (
 		<div className="flex flex-col w-[47.5%]">
-			<label className=" text-white " htmlFor={id}>
-				{labelText}
+			<label className=" text-white " htmlFor={props.id}>
+				{props.labelText}
 			</label>
 			<input
 				className="px-3 py-1 border rounded-md disabled:bg-white"
 				autoComplete="off"
-				id={id}
-				placeholder={placeholder}
-				value={value}
-				disabled={loadingState !== 'fulfilled'}
-				onChange={onChange}
+				id={props.id}
+				placeholder={props.placeholder}
+				value={props.value}
+				onChange={props.onChange}
 				onKeyUp={({ key }) => {
-					if (key === 'ArrowUp' || key === 'ArrowDown') {
+					if (key === 'ArrowUp') {
 						// You know what to do here 😉
 						console.log(
 							'%c the key code -->',
 							'background: tomato; color: white; display: block;',
 							key
 						);
-						onKeyUp();
+					}
+					if (key === 'ArrowDown') {
+						// You know what to do here 😉
+						console.log(
+							'%c the key code -->',
+							'background: tomato; color: white; display: block;',
+							key
+						);
 					}
 				}}
 			/>

@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { stat } from 'fs';
+import { Middleware } from 'redux';
 const changeLog = (action: any) => {
 	console.log(
 		'%c reducer',
@@ -29,3 +31,9 @@ const coordsSlice = createSlice({
 
 export const { latitudeChanged, longitudeChanged } = coordsSlice.actions;
 export default coordsSlice.reducer;
+
+export const middleware: Middleware = (store) => (next) => (action) => {
+	const stateToSave = store.getState().coords;
+	localStorage.setItem('weatherApp', JSON.stringify(stateToSave));
+	return next(action);
+};
