@@ -18,20 +18,10 @@ const coordsSlice = createSlice({
 	reducers: {
 		latitudeChanged(state, action: PayloadAction<string>) {
 			changeLog(action);
-
-			if (action.payload.length >= 7) {
-				state.latitude = action.payload;
-				return;
-			}
 			state.latitude = action.payload;
 		},
 		longitudeChanged(state, action: PayloadAction<string>) {
 			changeLog(action);
-
-			if (action.payload.length >= 7) {
-				state.longitude = action.payload;
-				return;
-			}
 			state.longitude = action.payload;
 		},
 	},

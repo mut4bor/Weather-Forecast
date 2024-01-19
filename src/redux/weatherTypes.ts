@@ -62,5 +62,5 @@ export function isErrorResponse(
 	if ((data as IWeatherError).cod == 200) {
 		return false;
 	}
-	return (data as IWeatherError).cod !== undefined;
+	return true;
 }

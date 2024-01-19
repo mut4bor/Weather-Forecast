@@ -19,10 +19,12 @@ export default function Form() {
 			>
 				<div className="flex flex-wrap justify-between">
 					<FormInput
-						labelText="Широта"
+						labelText=""
 						id="lat"
 						placeholder="Введите широту"
 						value={latitude ?? ''}
+						onKeyUp={() => {
+						}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -38,10 +40,12 @@ export default function Form() {
 						}}
 					/>
 					<FormInput
-						labelText="Долгота"
+						labelText=""
 						id="lon"
 						placeholder="Введите долготу"
 						value={longitude ?? ''}
+						onKeyUp={() => {
+						}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -69,21 +73,24 @@ type FormInputProps = {
 	placeholder: string;
 	value: string | number;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onKeyUp: () => void;
 };
 
 export function FormInput(props: FormInputProps) {
-	const { labelText, id, placeholder, value, onChange } = props;
+	const { labelText, id, placeholder, value, onChange, onKeyUp } = props;
+	const loadingState = useAppSelector((state) => state.weather.loading);
 	return (
 		<div className="flex flex-col w-[47.5%]">
 			<label className=" text-white " htmlFor={id}>
 				{labelText}
 			</label>
 			<input
-				className="px-3 py-1 border rounded-md"
+				className="px-3 py-1 border rounded-md disabled:bg-white"
 				autoComplete="off"
 				id={id}
 				placeholder={placeholder}
 				value={value}
+				disabled={loadingState !== 'fulfilled'}
 				onChange={onChange}
 				onKeyUp={({ key }) => {
 					if (key === 'ArrowUp' || key === 'ArrowDown') {
@@ -93,6 +100,7 @@ export function FormInput(props: FormInputProps) {
 							'background: tomato; color: white; display: block;',
 							key
 						);
+						onKeyUp();
 					}
 				}}
 			/>

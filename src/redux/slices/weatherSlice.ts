@@ -6,7 +6,7 @@ export const fetchData = createAsyncThunk(
 	async (coords: { latitude: number; longitude: number }) => {
 		const apiUrl = `https://api.openweathermap.org/data/2.5/weather`;
 		const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
-		// See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+
 		const searchParams = new URLSearchParams({
 			lat: coords.latitude.toString(),
 			lon: coords.longitude.toString(),
@@ -24,7 +24,7 @@ export const fetchData = createAsyncThunk(
 
 type IWeatherSlice = {
 	data: WeatherAPIResponse | undefined;
-	loading: 'idle' | 'pending' | 'succeeded' | 'failed';
+	loading: 'idle' | 'pending' | 'fulfilled' | 'rejected';
 };
 
 const weatherSlice = createSlice({
@@ -34,9 +34,15 @@ const weatherSlice = createSlice({
 	} as IWeatherSlice,
 	reducers: {},
 	extraReducers: (builder) => {
+		builder.addCase(fetchData.pending, (state) => {
+			state.loading = 'pending';
+		});
 		builder.addCase(fetchData.fulfilled, (state, action) => {
-			state.loading = 'succeeded';
+			state.loading = 'fulfilled';
 			state.data = action.payload;
+		});
+		builder.addCase(fetchData.rejected, (state, action) => {
+			state.loading = 'rejected';
 		});
 	},
 });

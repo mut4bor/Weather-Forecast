@@ -15,7 +15,6 @@ import BrokenClouds from '../icons/Cloudy.png';
 import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
 import _ from 'lodash';
-import { RootState } from '../redux/store';
 
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
@@ -25,7 +24,6 @@ const Weather = () => {
 	const data = useAppSelector((state) => state.weather.data);
 	const coords = useAppSelector((state) => state.coords);
 	const dispatch = useAppDispatch();
-
 	const dispatchData = () => {
 		dispatch(
 			fetchData({
@@ -43,9 +41,20 @@ const Weather = () => {
 		};
 	}, [coords]);
 
+	if (data && isErrorResponse(data)) {
+		return (
+			<>
+				<div className=" text-white ">
+					<div>Error {data.cod}</div>
+					<div>{data.message}</div>
+				</div>
+			</>
+		);
+	}
+
 	return (
 		<>
-			<div className=" text-white ">
+			<div className=" text-white relative">
 				<HeaderWeather data={data} />
 				<BodyWeather data={data} />
 				<FooterWeather data={data} />
@@ -55,11 +64,7 @@ const Weather = () => {
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
-	if (!data || isErrorResponse(data)) {
-		return <div>Error</div>;
-	}
-
-	if (data && data.name == '') {
+	if (data && !isErrorResponse(data) && data.name == '') {
 		return (
 			<div>
 				<div className=" font-semibold ">
@@ -70,7 +75,7 @@ export function HeaderWeather({ data }: WeatherProps) {
 	}
 	return (
 		<>
-			{data && (
+			{data && !isErrorResponse(data) && (
 				<div className=" font-semibold ">
 					{data.name.charAt(0).toUpperCase() + data.name.slice(1)}, <Date />
 				</div>
@@ -102,32 +107,26 @@ export function BodyWeather({ data }: WeatherProps) {
 	} as Record<string, string>;
 
 	const weatherIconHandler = () => {
-		if (!data || isErrorResponse(data)) {
-			return;
+		if (data && !isErrorResponse(data)) {
+			const faviconLinkTagList = document.querySelectorAll(
+				'link[rel="icon"], link[rel="shortcut icon"]'
+			);
+			faviconLinkTagList.forEach(function (element) {
+				element.setAttribute('href', iconMap[data.weather[0].icon]);
+			});
+			if (data.name == '') {
+				document.title = `Weather Forecast by mut4bor`;
+				return;
+			}
+			document.title = `${data.name} – Weather Forecast by mut4bor`;
 		}
-
-		const faviconLinkTagList = document.querySelectorAll(
-			'link[rel="icon"], link[rel="shortcut icon"]'
-		);
-		faviconLinkTagList.forEach(function (element) {
-			element.setAttribute('href', iconMap[data.weather[0].icon]);
-		});
-		if (data.name == '') {
-			document.title = `Weather Forecast by mut4bor`;
-			return;
-		}
-		document.title = `${data.name} – Weather Forecast by mut4bor`;
 	};
 
 	useEffect(weatherIconHandler, [data]);
 
-	if (!data || isErrorResponse(data)) {
-		return <div>Error</div>;
-	}
-
 	return (
 		<>
-			{data && (
+			{data && !isErrorResponse(data) && (
 				<div className="flex flex-row">
 					<div className=" h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
 						{Math.round(data.main.temp)}°
@@ -184,13 +183,29 @@ type FooterInfoProps = {
 export function FooterInfo(props: FooterInfoProps) {
 	return (
 		<div className="flex flex-row">
-			<svg className="w-[24px] h-[24px] mr-1 opacity-60">
-				<use href={props.href} />
-			</svg>
+			<SVG
+				className="w-[24px] h-[24px] mr-1 opacity-60"
+				href={props.href}
+				useClassName=""
+			/>
 			{props.dataElement}
 			{!!props.spaceSymbol ? ' ' : ''}
 			{props.measure}
 		</div>
+	);
+}
+
+type SVGProps = {
+	href: string;
+	className: string;
+	useClassName: string;
+};
+
+export function SVG(props: SVGProps) {
+	return (
+		<svg className={props.className}>
+			<use className={props.useClassName} href={props.href} />
+		</svg>
 	);
 }
 

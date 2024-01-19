@@ -15,7 +15,6 @@ type MapObject = {
 	events: {
 		add: Function;
 	};
-	// https://yandex.com/dev/jsapi-v2-1/doc/en/v2-1/ref/reference/Map#setCenter
 	setCenter: Function;
 };
 
@@ -32,7 +31,7 @@ export default function GeoMap() {
 	);
 	const mapCoords = useAppSelector((state) => state.coords);
 	const shouldCenter = useAppSelector((state) => state.map.center);
-	const [pageBlurBoolean, setPageBlurBoolean] = useState(true);
+	const [pageLoading, setPageLoading] = useState(true);
 
 	const handleCircleDrag = useCallback((event: any) => {
 		const { target } = event?.originalEvent ?? {};
@@ -79,14 +78,14 @@ export default function GeoMap() {
 	}, [mapRef.current, shouldCenter]);
 
 	useEffect(() => {
-		setTimeout(() => setPageBlurBoolean(false), 1000);
+		setTimeout(() => setPageLoading(false), 1000);
 	}, []);
 
 	return (
 		<>
 			<div
 				className={`${
-					pageBlurBoolean ? 'blur pointer-events-none' : ''
+					pageLoading ? 'blur pointer-events-none' : ''
 				} transition ease-out`}
 			>
 				<YMaps>

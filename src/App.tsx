@@ -2,11 +2,12 @@ import './App.css';
 import Weather from './components/Weather';
 import Form from './components/Form';
 import GeoMap from './components/GeoMap';
-
+import Loading from './components/Loading'
 function App() {
 	return (
 		<>
-			<div className=" p-6 flex flex-col flex-wrap absolute z-50 bg-[#101d29] gap-2 rounded-lg right-[10px] top-[10px]">
+			<div className=" h-[200px] p-6 flex flex-col flex-wrap absolute z-50 bg-[#101d29] justify-between rounded-lg right-[10px] top-[10px] overflow-hidden">
+				<Loading/>
 				<Weather />
 				<Form />
 			</div>
