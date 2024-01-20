@@ -16,7 +16,6 @@ import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
 import _ from 'lodash';
 import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
-
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
 };
@@ -26,25 +25,30 @@ const Weather = () => {
 	const coords = useAppSelector((state) => state.coords);
 	const dispatch = useAppDispatch();
 
-	const dispatchData = () => {
-		const storedData = localStorage.getItem('weatherApp');
-		const parsedData = storedData ? JSON.parse(storedData) : null;
+	const storedCoords = localStorage.getItem('weather');
+	const parsedCoords = storedCoords ? JSON.parse(storedCoords) : null;
 
-		const cachedLatitude = parsedData ? parsedData.latitude : null;
-		const cachedLongitude = parsedData ? parsedData.longitude : null;
+	const cachedLatitude = parsedCoords ? parsedCoords.latitude : null;
+	const cachedLongitude = parsedCoords ? parsedCoords.longitude : null;
 
-		if (cachedLatitude && cachedLongitude) {
-			dispatch(latitudeChanged(cachedLatitude));
-			dispatch(longitudeChanged(cachedLongitude));
-			dispatch(
-				fetchData({
-					latitude: parseFloat(cachedLatitude),
-					longitude: parseFloat(cachedLongitude),
-				})
-			);
+	const storedSettings = localStorage.getItem('settings');
+	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
+	const cacheBoolean = useAppSelector((state) => state.settings.cacheBoolean);
+
+	useEffect(() => {
+		if (parsedSettings === true || cacheBoolean === true) {
+			cachedLatitude && dispatch(latitudeChanged(cachedLatitude));
+			cachedLongitude && dispatch(longitudeChanged(cachedLongitude));
 			return;
 		}
+		if (parsedSettings === false || cacheBoolean === false) {
+			localStorage.removeItem('weather');
+			console.log('false');
+			return;
+		}
+	}, [cacheBoolean]);
 
+	const dispatchData = () => {
 		if (coords.latitude && coords.longitude) {
 			dispatch(
 				fetchData({
@@ -61,7 +65,7 @@ const Weather = () => {
 		return () => {
 			debouncedFetchData.cancel();
 		};
-	}, [coords]);
+	}, [coords, cacheBoolean, parsedSettings]);
 
 	return (
 		<>

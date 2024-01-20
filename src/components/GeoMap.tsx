@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
 import { shouldNotCenter } from '../redux/slices/mapSlice';
-
+import _ from 'lodash';
 type GeoObject = {
 	events: {
 		add: Function;

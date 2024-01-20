@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { stat } from 'fs';
 import { Middleware } from 'redux';
 const changeLog = (action: any) => {
 	console.log(
@@ -32,8 +31,16 @@ const coordsSlice = createSlice({
 export const { latitudeChanged, longitudeChanged } = coordsSlice.actions;
 export default coordsSlice.reducer;
 
-export const middleware: Middleware = (store) => (next) => (action) => {
-	const stateToSave = store.getState().coords;
-	localStorage.setItem('weatherApp', JSON.stringify(stateToSave));
+export const coordsMiddleware: Middleware = (store) => (next) => (action) => {
+	const storedSettings = localStorage.getItem('settings');
+	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
+
+	const cacheBoolean = store.getState().settings.cacheBoolean;
+
+	if (parsedSettings === true || cacheBoolean === true) {
+		const stateToSave = store.getState().coords;
+		localStorage.setItem('weather', JSON.stringify(stateToSave));
+	}
+
 	return next(action);
 };
