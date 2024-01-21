@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import { YMaps, Map, Circle } from '@pbe/react-yandex-maps';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
+import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
 import { shouldNotCenter } from '../redux/slices/mapSlice';
 import _ from 'lodash';
@@ -39,8 +39,12 @@ export default function GeoMap() {
 			| undefined;
 
 		if (coordinates) {
-			dispatch(latitudeChanged(coordinates[0].toString()));
-			dispatch(longitudeChanged(coordinates[1].toString()));
+			dispatch(
+				coordsChanged({
+					latitude: coordinates[0].toString(),
+					longitude: coordinates[1].toString(),
+				})
+			);
 		}
 	}, []);
 

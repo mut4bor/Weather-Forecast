@@ -6,17 +6,28 @@ const settingSlice = createSlice({
 	initialState: {
 		settingsBoolean: false,
 		cacheBoolean: true,
+		modalValues: {
+			modalFirstValue: 'top-[10px]',
+			modalSecondValue: 'right-[10px]',
+		},
 	},
 
 	reducers: {
-		settingsToggle(state, action) {
+		settingsToggled(state, action) {
 			state.settingsBoolean = action.payload;
 		},
-		cacheBooleanToggle(state, action) {
+		cacheBooleanToggled(state, action) {
 			state.cacheBoolean = action.payload;
+		},
+		modalValuesChanged(state, action) {
+			state.modalValues = action.payload;
 		},
 	},
 });
 
-export const { settingsToggle, cacheBooleanToggle } = settingSlice.actions;
+export const {
+	settingsToggled,
+	cacheBooleanToggled,
+	modalValuesChanged,
+} = settingSlice.actions;
 export default settingSlice.reducer;

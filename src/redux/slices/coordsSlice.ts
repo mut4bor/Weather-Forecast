@@ -8,31 +8,32 @@ const changeLog = (action: any) => {
 	);
 };
 
+interface ICoordsSlice {
+	latitude: string;
+	longitude: string;
+}
+
 const coordsSlice = createSlice({
 	name: 'coords',
 
 	initialState: {
 		latitude: '59.9533',
 		longitude: '30.3068',
-	},
+	} as ICoordsSlice,
 
 	reducers: {
-		latitudeChanged(state, action: PayloadAction<string>) {
+		coordsChanged(state, action: PayloadAction<ICoordsSlice>) {
 			changeLog(action);
-			state.latitude = action.payload;
-		},
-		longitudeChanged(state, action: PayloadAction<string>) {
-			changeLog(action);
-			state.longitude = action.payload;
+			state = action.payload;
 		},
 	},
 });
 
-export const { latitudeChanged, longitudeChanged } = coordsSlice.actions;
+export const { coordsChanged } = coordsSlice.actions;
 export default coordsSlice.reducer;
 
 export const coordsMiddleware: Middleware = (store) => (next) => (action) => {
-	const storedSettings = localStorage.getItem('settings');
+	const storedSettings = localStorage.getItem('settingsBoolean');
 	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
 
 	const cacheBoolean = store.getState().settings.cacheBoolean;

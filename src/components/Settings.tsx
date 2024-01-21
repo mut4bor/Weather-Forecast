@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import {
-	settingsToggle,
-	cacheBooleanToggle,
+	settingsToggled,
+	cacheBooleanToggled,
 } from '../redux/slices/settingSlice';
 import { SVG } from './Weather';
 import _ from 'lodash';
@@ -14,32 +14,21 @@ export default function Settings() {
 	const cacheBoolean = useAppSelector((state) => state.settings.cacheBoolean);
 
 	const dispatch = useAppDispatch();
-	const storedSettings = localStorage.getItem('settings');
+	const storedSettings = localStorage.getItem('settingsBoolean');
 	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
 
+	const modalValues = useAppSelector((state) => state.settings.modalValues);
+
 	useEffect(() => {
-		parsedSettings !== null && dispatch(cacheBooleanToggle(parsedSettings));
+		parsedSettings !== null && dispatch(cacheBooleanToggled(parsedSettings));
 	}, []);
 
 	return (
 		<>
-			<button
-				className="absolute top-4 right-4 z-10"
-				type="button"
-				onClick={() => {
-					dispatch(settingsToggle(!settingsBoolean));
-				}}
-			>
-				<SVG
-					href={'#settings'}
-					className={'w-[25px] h-[25px]'}
-					useClassName={''}
-				></SVG>
-			</button>
 			<div
 				className={`${
-					settingsBoolean ? '' : 'opacity-0 pointer-events-none'
-				} w-[100%] h-[100%] text-white absolute left-0 top-0 bg-[#101d29] transition p-4`}
+					!settingsBoolean && 'opacity-0 pointer-events-none'
+				} w-[100%] h-[100%] text-white absolute left-0 top-0 bg-[#101d29] transition p-4 flex flex-col justify-between z-[1]`}
 			>
 				<ul>
 					<li>
@@ -49,28 +38,51 @@ export default function Settings() {
 							type="checkbox"
 							checked={cacheBoolean}
 							onChange={() => {
-								dispatch(cacheBooleanToggle(!cacheBoolean));
-								localStorage.setItem('settings', JSON.stringify(!cacheBoolean));
+								dispatch(cacheBooleanToggled(!cacheBoolean));
+								localStorage.setItem(
+									'settingsBoolean',
+									JSON.stringify(!cacheBoolean)
+								);
 							}}
 						/>
 					</li>
-					<li>
-						<button
-							type="button"
-							onClick={() => {
-								localStorage.clear();
-							}}
-						>
-							Очистить кэш
-						</button>
-					</li>
-					<li>
-						<button type="button" onClick={() => {}}>
-							Положение окна
-						</button>
-					</li>
 				</ul>
+				<div className="flex justify-between w-[50%] mx-auto">
+					<button
+						className="border px-3 py-1 rounded bg-white w-[100%] text-[#101d29]"
+						onClick={() => {
+							dispatch(settingsToggled(false));
+							localStorage.setItem(
+								'modalPosition',
+								JSON.stringify(modalValues)
+							);
+						}}
+					>
+						Сохранить
+					</button>
+				</div>
 			</div>
 		</>
+	);
+}
+
+export function SettingsButton() {
+	const dispatch = useAppDispatch();
+
+	return (
+		<button
+			className="absolute top-4 right-4"
+			type="button"
+			title="Настройки"
+			onClick={() => {
+				dispatch(settingsToggled(true));
+			}}
+		>
+			<SVG
+				href={'#settings'}
+				className={'w-[25px] h-[25px]'}
+				useClassName={''}
+			/>
+		</button>
 	);
 }

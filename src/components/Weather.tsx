@@ -15,7 +15,7 @@ import BrokenClouds from '../icons/Cloudy.png';
 import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
 import _ from 'lodash';
-import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
+import { coordsChanged } from '../redux/slices/coordsSlice';
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
 };
@@ -31,19 +31,23 @@ const Weather = () => {
 	const cachedLatitude = parsedCoords ? parsedCoords.latitude : null;
 	const cachedLongitude = parsedCoords ? parsedCoords.longitude : null;
 
-	const storedSettings = localStorage.getItem('settings');
+	const storedSettings = localStorage.getItem('settingsBoolean');
 	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
 	const cacheBoolean = useAppSelector((state) => state.settings.cacheBoolean);
 
 	useEffect(() => {
 		if (parsedSettings === true || cacheBoolean === true) {
-			cachedLatitude && dispatch(latitudeChanged(cachedLatitude));
-			cachedLongitude && dispatch(longitudeChanged(cachedLongitude));
+			cachedLatitude &&
+				dispatch(
+					coordsChanged({
+						latitude: cachedLatitude,
+						longitude: cachedLongitude,
+					})
+				);
 			return;
 		}
 		if (parsedSettings === false || cacheBoolean === false) {
 			localStorage.removeItem('weather');
-			console.log('false');
 			return;
 		}
 	}, [cacheBoolean]);

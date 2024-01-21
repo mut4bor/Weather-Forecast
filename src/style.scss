@@ -1,0 +1,37 @@
+.checkbox {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	cursor: pointer;
+	+ label {
+			display: inline-flex;
+			align-items: center;
+			user-select: none;
+			cursor: pointer;
+			font-size: 18px;
+			&::before {
+					content: "";
+					display: inline-block;
+					height: 25px;
+					aspect-ratio: 1;
+					flex-shrink: 0;
+					flex-grow: 0;
+					border: 1px solid #adb5bd;
+					border-radius: 50%;
+					margin: 0 8px 0 0;
+					background-repeat: no-repeat;
+					background-position: center;
+					background-size: 60%;
+					transition: 0.1s ease-in-out;
+			}
+	}
+	&:checked + label::before {
+			border-color: $pink;
+			background-color: $pink;
+			background-image: url("img/icons/checkmark.svg");
+	}
+
+	&:not(:disabled):not(:checked) + label:hover::before {
+			border-color: $pink;
+	}
+}

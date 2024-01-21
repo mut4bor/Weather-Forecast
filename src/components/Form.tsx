@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { latitudeChanged, longitudeChanged } from '../redux/slices/coordsSlice';
+import { coordsChanged } from '../redux/slices/coordsSlice';
 import { shouldCenter } from '../redux/slices/mapSlice';
 import { parseCoordinate } from './parseCoordinate';
 
@@ -29,13 +29,23 @@ export default function Form() {
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatch(latitudeChanged(fieldValue));
+								dispatch(
+									coordsChanged({
+										latitude: fieldValue,
+										longitude: longitude,
+									})
+								);
 								return;
 							}
 							if (!textInputRegexp.test(fieldValue)) return;
 							const value = parseCoordinate(event.target.value);
 							if (value <= 90) {
-								dispatch(latitudeChanged(fieldValue));
+								dispatch(
+									coordsChanged({
+										latitude: fieldValue,
+										longitude: longitude,
+									})
+								);
 								dispatch(shouldCenter());
 							}
 						}}
@@ -51,17 +61,28 @@ export default function Form() {
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatch(longitudeChanged(fieldValue));
+								dispatch(
+									coordsChanged({
+										latitude: latitude,
+										longitude: fieldValue,
+									})
+								);
 								return;
 							}
 							// Here we are checking that string in the input value have only digits or '.' sign as decimal point.
 							if (!textInputRegexp.test(fieldValue)) return;
 							const value = parseCoordinate(fieldValue);
 							if (value <= 180) {
-								dispatch(longitudeChanged(fieldValue));
+								dispatch(
+									coordsChanged({
+										latitude: latitude,
+										longitude: fieldValue,
+									})
+								);
 								dispatch(shouldCenter());
 							}
 						}}
+						//! fix inputs
 					/>
 				</div>
 			</form>
