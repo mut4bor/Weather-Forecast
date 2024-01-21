@@ -22,9 +22,10 @@ const coordsSlice = createSlice({
 	} as ICoordsSlice,
 
 	reducers: {
-		coordsChanged(state, action: PayloadAction<ICoordsSlice>) {
+		coordsChanged(state, action) {
 			changeLog(action);
-			state = action.payload;
+			state.latitude = action.payload.latitude;
+			state.longitude = action.payload.longitude;
 		},
 	},
 });
@@ -40,7 +41,7 @@ export const coordsMiddleware: Middleware = (store) => (next) => (action) => {
 
 	if (parsedSettings === true || cacheBoolean === true) {
 		const stateToSave = store.getState().coords;
-		localStorage.setItem('weather', JSON.stringify(stateToSave));
+		localStorage.setItem('coords', JSON.stringify(stateToSave));
 	}
 
 	return next(action);

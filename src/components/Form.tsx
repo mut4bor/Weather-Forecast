@@ -2,12 +2,14 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { shouldCenter } from '../redux/slices/mapSlice';
 import { parseCoordinate } from './parseCoordinate';
+import { store } from '../redux/store';
 
 const textInputRegexp = /^[0-9.]*$/;
 
 export default function Form() {
 	const dispatch = useAppDispatch();
-	const { latitude, longitude } = useAppSelector((state) => state.coords);
+	const coords = useAppSelector((state) => state.coords);
+	const latitude = useAppSelector((state) => state.coords.latitude);
 
 	return (
 		<>
@@ -32,7 +34,7 @@ export default function Form() {
 								dispatch(
 									coordsChanged({
 										latitude: fieldValue,
-										longitude: longitude,
+										longitude: store.getState().coords.longitude,
 									})
 								);
 								return;
@@ -43,7 +45,7 @@ export default function Form() {
 								dispatch(
 									coordsChanged({
 										latitude: fieldValue,
-										longitude: longitude,
+										longitude: coords.longitude,
 									})
 								);
 								dispatch(shouldCenter());
@@ -54,8 +56,8 @@ export default function Form() {
 						labelText=""
 						id="lon"
 						placeholder="Введите долготу"
-						value={longitude ?? ''}
-						coordinate={longitude}
+						value={coords.longitude ?? ''}
+						coordinate={coords.longitude}
 						onArrowUp={() => {}}
 						onArrowDown={() => {}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +65,7 @@ export default function Form() {
 							if (!fieldValue) {
 								dispatch(
 									coordsChanged({
-										latitude: latitude,
+										latitude: store.getState().coords.latitude,
 										longitude: fieldValue,
 									})
 								);
@@ -75,7 +77,7 @@ export default function Form() {
 							if (value <= 180) {
 								dispatch(
 									coordsChanged({
-										latitude: latitude,
+										latitude: store.getState().coords.latitude,
 										longitude: fieldValue,
 									})
 								);

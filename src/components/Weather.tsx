@@ -25,7 +25,7 @@ const Weather = () => {
 	const coords = useAppSelector((state) => state.coords);
 	const dispatch = useAppDispatch();
 
-	const storedCoords = localStorage.getItem('weather');
+	const storedCoords = localStorage.getItem('coords');
 	const parsedCoords = storedCoords ? JSON.parse(storedCoords) : null;
 
 	const cachedLatitude = parsedCoords ? parsedCoords.latitude : null;
