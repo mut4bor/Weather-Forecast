@@ -47,7 +47,7 @@ const Weather = () => {
 			return;
 		}
 		if (parsedSettings === false || cacheBoolean === false) {
-			localStorage.removeItem('weather');
+			localStorage.removeItem('coords');
 			return;
 		}
 	}, [cacheBoolean]);

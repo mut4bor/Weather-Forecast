@@ -28,13 +28,13 @@ export default function Settings() {
 			<div
 				className={`${
 					!settingsBoolean && 'opacity-0 pointer-events-none'
-				} w-[100%] h-[100%] text-white absolute left-0 top-0 bg-[#101d29] transition p-4 flex flex-col justify-between z-[1]`}
+				} w-[100%] h-[100%] text-white absolute left-0 top-0 bg-[#101d29] transition p-4 flex flex-col justify-between z-[2]`}
 			>
 				<ul>
 					<li>
-						<label htmlFor="cacheToggle">Сохранять последний запрос</label>
 						<input
 							id="cacheToggle"
+							className="checkbox"
 							type="checkbox"
 							checked={cacheBoolean}
 							onChange={() => {
@@ -45,6 +45,7 @@ export default function Settings() {
 								);
 							}}
 						/>
+						<label htmlFor="cacheToggle">Сохранять последний запрос</label>
 					</li>
 				</ul>
 				<div className="flex justify-between w-[50%] mx-auto">

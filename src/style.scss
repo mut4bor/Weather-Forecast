@@ -1,3 +1,6 @@
+//! Make sure <label> tag is being after the input
+$main-color: #fff;
+
 .checkbox {
 	position: absolute;
 	z-index: -1;
@@ -12,12 +15,12 @@
 			&::before {
 					content: "";
 					display: inline-block;
-					height: 25px;
+					height: 18px;
 					aspect-ratio: 1;
 					flex-shrink: 0;
 					flex-grow: 0;
 					border: 1px solid #adb5bd;
-					border-radius: 50%;
+					border-radius: 5px;
 					margin: 0 8px 0 0;
 					background-repeat: no-repeat;
 					background-position: center;
@@ -26,12 +29,21 @@
 			}
 	}
 	&:checked + label::before {
-			border-color: $pink;
-			background-color: $pink;
-			background-image: url("img/icons/checkmark.svg");
+			border-color: $main-color;
+			background-color: $main-color;
+			background-image: url("./icons/checkmark.svg");
 	}
 
 	&:not(:disabled):not(:checked) + label:hover::before {
-			border-color: $pink;
+			border-color: $main-color;
 	}
+}
+
+.ymaps-2-1-79-map-copyrights-promo {
+	display: none;
+}
+
+.ymaps-2-1-79-controls__control {
+	inset: 50svh auto auto 10px;
+	transform: translateY(-50%);
 }

@@ -54,6 +54,7 @@ export function ModalPreview(props: ModalPreviewProps) {
 			} w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition`}
 			title={`${props.position.modalFirstValue}, ${props.position.modalSecondValue}`}
 			type="button"
+			disabled={settingsBoolean === false}
 			onClick={() => {
 				dispatch(
 					modalValuesChanged({

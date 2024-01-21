@@ -20,7 +20,6 @@ function App() {
 		: null;
 	useEffect(() => {
 		if (parsedModalPosition !== null) {
-			console.log(parsedModalPosition);
 			dispatch(
 				modalValuesChanged({
 					modalFirstValue: parsedModalPosition.modalFirstValue,

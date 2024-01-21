@@ -20,6 +20,7 @@ type MapObject = {
 
 export default function GeoMap() {
 	const dispatch = useAppDispatch();
+	const settingsBoolean = useAppSelector(state => state.settings.settingsBoolean)
 	const circleRef = useRef<GeoObject>();
 	const mapRef = useRef<MapObject>();
 
