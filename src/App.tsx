@@ -6,7 +6,7 @@ import Loading from './components/Loading';
 import Settings from './components/Settings';
 import { SettingsButton } from './components/Settings';
 import ModalWindowTemplate from './components/ModalWindowTemplate';
-import { useAppDispatch, useAppSelector } from './redux/hooks';
+import { useAppSelector, useAppDispatch } from './redux/hooks';
 import { useEffect } from 'react';
 import { modalValuesChanged } from './redux/slices/settingSlice';
 

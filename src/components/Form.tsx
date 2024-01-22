@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { shouldCenter } from '../redux/slices/mapSlice';
-import { parseCoordinate } from './parseCoordinate';
+import { parseCoordinate, roundCoordinate } from './parseCoordinate';
 import { store } from '../redux/store';
 
 const textInputRegexp = /^[0-9.]*$/;
@@ -22,12 +22,11 @@ export default function Form() {
 				<div className="flex flex-wrap justify-between">
 					<FormInput
 						labelText=""
-						id="lat"
+						id="latitude"
+						dispatchType="latitude"
 						placeholder="Введите широту"
 						value={latitude ?? ''}
 						coordinate={latitude}
-						onArrowUp={() => {}}
-						onArrowDown={() => {}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -54,12 +53,11 @@ export default function Form() {
 					/>
 					<FormInput
 						labelText=""
-						id="lon"
+						id="longitude"
+						dispatchType="longitude"
 						placeholder="Введите долготу"
 						value={coords.longitude ?? ''}
 						coordinate={coords.longitude}
-						onArrowUp={() => {}}
-						onArrowDown={() => {}}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
@@ -84,7 +82,6 @@ export default function Form() {
 								dispatch(shouldCenter());
 							}
 						}}
-						//! fix inputs
 					/>
 				</div>
 			</form>
@@ -98,12 +95,28 @@ type FormInputProps = {
 	placeholder: string;
 	value: string | number;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	onArrowUp: () => void;
-	onArrowDown: () => void;
 	coordinate: string;
+	dispatchType: string;
 };
 
 export function FormInput(props: FormInputProps) {
+	const dispatch = useAppDispatch();
+	const coords = useAppSelector((state) => state.coords);
+	const parsedLatitude = parseCoordinate(coords.latitude);
+	const parsedLongitude = parseCoordinate(coords.longitude);
+	const changeValue = 0.01;
+
+	const getParsedAndRoundedCoord = (
+		parsedCoord: number,
+		changeValue: number,
+		sign: 'plus' | 'minus'
+	): number => {
+		if (sign === 'plus') {
+			return roundCoordinate(parsedCoord + changeValue, 10000);
+		}
+		return roundCoordinate(parsedCoord - changeValue, 10000);
+	};
+
 	return (
 		<div className="flex flex-col w-[47.5%]">
 			<label className=" text-white " htmlFor={props.id}>
@@ -118,20 +131,56 @@ export function FormInput(props: FormInputProps) {
 				onChange={props.onChange}
 				onKeyUp={({ key }) => {
 					if (key === 'ArrowUp') {
-						// You know what to do here 😉
-						console.log(
-							'%c the key code -->',
-							'background: tomato; color: white; display: block;',
-							key
-						);
+						if (props.dispatchType == 'latitude') {
+							dispatch(
+								coordsChanged({
+									latitude: getParsedAndRoundedCoord(
+										parsedLatitude,
+										changeValue,
+										'plus'
+									).toString(),
+									longitude: coords.longitude,
+								})
+							);
+						}
+						if (props.dispatchType == 'longitude') {
+							dispatch(
+								coordsChanged({
+									latitude: coords.latitude,
+									longitude: getParsedAndRoundedCoord(
+										parsedLongitude,
+										changeValue,
+										'plus'
+									).toString(),
+								})
+							);
+						}
 					}
 					if (key === 'ArrowDown') {
-						// You know what to do here 😉
-						console.log(
-							'%c the key code -->',
-							'background: tomato; color: white; display: block;',
-							key
-						);
+						if (props.dispatchType == 'latitude') {
+							dispatch(
+								coordsChanged({
+									latitude: getParsedAndRoundedCoord(
+										parsedLatitude,
+										changeValue,
+										'minus'
+									).toString(),
+									longitude: coords.longitude,
+								})
+							);
+						}
+						if (props.dispatchType == 'longitude') {
+							dispatch(
+								coordsChanged({
+									latitude: coords.latitude,
+									longitude: getParsedAndRoundedCoord(
+										parsedLongitude,
+										changeValue,
+										'minus'
+									).toString(),
+								})
+							);
+						}
 					}
 				}}
 			/>

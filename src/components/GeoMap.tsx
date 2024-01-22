@@ -20,16 +20,13 @@ type MapObject = {
 
 export default function GeoMap() {
 	const dispatch = useAppDispatch();
-	const settingsBoolean = useAppSelector(state => state.settings.settingsBoolean)
 	const circleRef = useRef<GeoObject>();
 	const mapRef = useRef<MapObject>();
 
-	const latitude = useAppSelector((state) =>
-		parseCoordinate(state.coords.latitude)
-	);
-	const longitude = useAppSelector((state) =>
-		parseCoordinate(state.coords.longitude)
-	);
+	const coords = useAppSelector((state) => state.coords);
+	
+	const latitude = parseCoordinate(coords.latitude);
+	const longitude = parseCoordinate(coords.longitude);
 	const shouldCenter = useAppSelector((state) => state.map.center);
 	const [pageLoading, setPageLoading] = useState(true);
 
@@ -40,10 +37,13 @@ export default function GeoMap() {
 			| undefined;
 
 		if (coordinates) {
+			const roundAmount = 10000;
+			const latitude = Math.round(coordinates[0] * roundAmount) / roundAmount;
+			const longitude = Math.round(coordinates[1] * roundAmount) / roundAmount;
 			dispatch(
 				coordsChanged({
-					latitude: coordinates[0].toString(),
-					longitude: coordinates[1].toString(),
+					latitude: latitude.toString(),
+					longitude: longitude.toString(),
 				})
 			);
 		}
