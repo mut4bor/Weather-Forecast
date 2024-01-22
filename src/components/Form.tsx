@@ -99,6 +99,8 @@ type FormInputProps = {
 	dispatchType: string;
 };
 
+type Sign = 'plus' | 'minus'
+
 export function FormInput(props: FormInputProps) {
 	const dispatch = useAppDispatch();
 	const coords = useAppSelector((state) => state.coords);
@@ -109,13 +111,49 @@ export function FormInput(props: FormInputProps) {
 	const getParsedAndRoundedCoord = (
 		parsedCoord: number,
 		changeValue: number,
-		sign: 'plus' | 'minus'
+    sign: Sign
 	): number => {
 		if (sign === 'plus') {
 			return roundCoordinate(parsedCoord + changeValue, 10000);
 		}
 		return roundCoordinate(parsedCoord - changeValue, 10000);
 	};
+
+  const keyActionMap: Record<string, Sign> = {
+    'ArrowUp': 'plus',
+    'ArrowDown': 'minus'
+  }
+
+  const onKeyPress :React.KeyboardEventHandler = ({ key }) => {
+    const action = keyActionMap[key];
+    if (!action) return;
+
+    if (props.dispatchType == 'latitude') {
+      dispatch(
+        coordsChanged({
+          latitude: getParsedAndRoundedCoord(
+            parsedLatitude,
+            changeValue,
+            action
+          ).toString(),
+          longitude: coords.longitude,
+        })
+      );
+    }
+    if (props.dispatchType == 'longitude') {
+      dispatch(
+        coordsChanged({
+          latitude: coords.latitude,
+          longitude: getParsedAndRoundedCoord(
+            parsedLongitude,
+            changeValue,
+            action
+          ).toString(),
+        })
+      );
+    }
+
+  }
 
 	return (
 		<div className="flex flex-col w-[47.5%]">
@@ -129,60 +167,7 @@ export function FormInput(props: FormInputProps) {
 				placeholder={props.placeholder}
 				value={props.value}
 				onChange={props.onChange}
-				onKeyUp={({ key }) => {
-					if (key === 'ArrowUp') {
-						if (props.dispatchType == 'latitude') {
-							dispatch(
-								coordsChanged({
-									latitude: getParsedAndRoundedCoord(
-										parsedLatitude,
-										changeValue,
-										'plus'
-									).toString(),
-									longitude: coords.longitude,
-								})
-							);
-						}
-						if (props.dispatchType == 'longitude') {
-							dispatch(
-								coordsChanged({
-									latitude: coords.latitude,
-									longitude: getParsedAndRoundedCoord(
-										parsedLongitude,
-										changeValue,
-										'plus'
-									).toString(),
-								})
-							);
-						}
-					}
-					if (key === 'ArrowDown') {
-						if (props.dispatchType == 'latitude') {
-							dispatch(
-								coordsChanged({
-									latitude: getParsedAndRoundedCoord(
-										parsedLatitude,
-										changeValue,
-										'minus'
-									).toString(),
-									longitude: coords.longitude,
-								})
-							);
-						}
-						if (props.dispatchType == 'longitude') {
-							dispatch(
-								coordsChanged({
-									latitude: coords.latitude,
-									longitude: getParsedAndRoundedCoord(
-										parsedLongitude,
-										changeValue,
-										'minus'
-									).toString(),
-								})
-							);
-						}
-					}
-				}}
+        onKeyUp={onKeyPress}
 			/>
 		</div>
 	);
