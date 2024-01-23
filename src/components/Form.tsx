@@ -2,14 +2,22 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { shouldCenter } from '../redux/slices/mapSlice';
 import { parseCoordinate, roundCoordinate } from './parseCoordinate';
-import { store } from '../redux/store';
 
 const textInputRegexp = /^[0-9.]*$/;
 
 export default function Form() {
 	const dispatch = useAppDispatch();
-	const coords = useAppSelector((state) => state.coords);
 	const latitude = useAppSelector((state) => state.coords.latitude);
+	const longitude = useAppSelector((state) => state.coords.longitude);
+
+	const dispatchCoords = (latitude: string, longitude: string) => {
+		dispatch(
+			coordsChanged({
+				latitude: latitude,
+				longitude: longitude,
+			})
+		);
+	};
 
 	return (
 		<>
@@ -30,23 +38,13 @@ export default function Form() {
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatch(
-									coordsChanged({
-										latitude: fieldValue,
-										longitude: store.getState().coords.longitude,
-									})
-								);
+								dispatchCoords(fieldValue, longitude);
 								return;
 							}
 							if (!textInputRegexp.test(fieldValue)) return;
 							const value = parseCoordinate(event.target.value);
 							if (value <= 90) {
-								dispatch(
-									coordsChanged({
-										latitude: fieldValue,
-										longitude: coords.longitude,
-									})
-								);
+								dispatchCoords(fieldValue, longitude);
 								dispatch(shouldCenter());
 							}
 						}}
@@ -56,29 +54,18 @@ export default function Form() {
 						id="longitude"
 						dispatchType="longitude"
 						placeholder="Введите долготу"
-						value={coords.longitude ?? ''}
-						coordinate={coords.longitude}
+						value={longitude ?? ''}
+						coordinate={longitude}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatch(
-									coordsChanged({
-										latitude: store.getState().coords.latitude,
-										longitude: fieldValue,
-									})
-								);
+								dispatchCoords(latitude, fieldValue);
 								return;
 							}
-							// Here we are checking that string in the input value have only digits or '.' sign as decimal point.
 							if (!textInputRegexp.test(fieldValue)) return;
 							const value = parseCoordinate(fieldValue);
 							if (value <= 180) {
-								dispatch(
-									coordsChanged({
-										latitude: store.getState().coords.latitude,
-										longitude: fieldValue,
-									})
-								);
+								dispatchCoords(latitude, fieldValue);
 								dispatch(shouldCenter());
 							}
 						}}
@@ -99,19 +86,20 @@ type FormInputProps = {
 	dispatchType: string;
 };
 
-type Sign = 'plus' | 'minus'
+type Sign = 'plus' | 'minus';
 
 export function FormInput(props: FormInputProps) {
 	const dispatch = useAppDispatch();
-	const coords = useAppSelector((state) => state.coords);
-	const parsedLatitude = parseCoordinate(coords.latitude);
-	const parsedLongitude = parseCoordinate(coords.longitude);
+
+	const { latitude, longitude } = useAppSelector((state) => state.coords);
+	const parsedLatitude = parseCoordinate(latitude);
+	const parsedLongitude = parseCoordinate(longitude);
 	const changeValue = 0.01;
 
-	const getParsedAndRoundedCoord = (
+	const adjustCoordinate = (
 		parsedCoord: number,
 		changeValue: number,
-    sign: Sign
+		sign: Sign
 	): number => {
 		if (sign === 'plus') {
 			return roundCoordinate(parsedCoord + changeValue, 10000);
@@ -119,41 +107,40 @@ export function FormInput(props: FormInputProps) {
 		return roundCoordinate(parsedCoord - changeValue, 10000);
 	};
 
-  const keyActionMap: Record<string, Sign> = {
-    'ArrowUp': 'plus',
-    'ArrowDown': 'minus'
-  }
+	const keyActionMap: Record<string, Sign> = {
+		ArrowUp: 'plus',
+		ArrowDown: 'minus',
+	};
 
-  const onKeyPress :React.KeyboardEventHandler = ({ key }) => {
-    const action = keyActionMap[key];
-    if (!action) return;
+	const onKeyPress: React.KeyboardEventHandler = ({ key }) => {
+		const action = keyActionMap[key];
+		if (!action) return;
 
-    if (props.dispatchType == 'latitude') {
-      dispatch(
-        coordsChanged({
-          latitude: getParsedAndRoundedCoord(
-            parsedLatitude,
-            changeValue,
-            action
-          ).toString(),
-          longitude: coords.longitude,
-        })
-      );
-    }
-    if (props.dispatchType == 'longitude') {
-      dispatch(
-        coordsChanged({
-          latitude: coords.latitude,
-          longitude: getParsedAndRoundedCoord(
-            parsedLongitude,
-            changeValue,
-            action
-          ).toString(),
-        })
-      );
-    }
-
-  }
+		if (props.dispatchType == 'latitude') {
+			dispatch(
+				coordsChanged({
+					latitude: adjustCoordinate(
+						parsedLatitude,
+						changeValue,
+						action
+					).toString(),
+					longitude: longitude,
+				})
+			);
+		}
+		if (props.dispatchType == 'longitude') {
+			dispatch(
+				coordsChanged({
+					latitude: latitude,
+					longitude: adjustCoordinate(
+						parsedLongitude,
+						changeValue,
+						action
+					).toString(),
+				})
+			);
+		}
+	};
 
 	return (
 		<div className="flex flex-col w-[47.5%]">
@@ -167,7 +154,7 @@ export function FormInput(props: FormInputProps) {
 				placeholder={props.placeholder}
 				value={props.value}
 				onChange={props.onChange}
-        onKeyUp={onKeyPress}
+				onKeyDown={onKeyPress}
 			/>
 		</div>
 	);

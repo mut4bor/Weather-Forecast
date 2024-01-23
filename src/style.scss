@@ -44,6 +44,6 @@ $main-color: #fff;
 }
 
 .ymaps-2-1-79-controls__control {
-	inset: 50svh auto auto 10px;
+	inset: 50svh auto auto 10px !important;
 	transform: translateY(-50%);
 }
