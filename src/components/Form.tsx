@@ -7,17 +7,7 @@ const textInputRegexp = /^[0-9.]*$/;
 
 export default function Form() {
 	const dispatch = useAppDispatch();
-	const latitude = useAppSelector((state) => state.coords.latitude);
-	const longitude = useAppSelector((state) => state.coords.longitude);
-
-	const dispatchCoords = (latitude: string, longitude: string) => {
-		dispatch(
-			coordsChanged({
-				latitude: latitude,
-				longitude: longitude,
-			})
-		);
-	};
+	const coords = useAppSelector((state) => state.coords);
 
 	return (
 		<>
@@ -31,20 +21,29 @@ export default function Form() {
 					<FormInput
 						labelText=""
 						id="latitude"
-						dispatchType="latitude"
+						name="latitude"
 						placeholder="Введите широту"
-						value={latitude ?? ''}
-						coordinate={latitude}
+						value={coords.latitude ?? ''}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatchCoords(fieldValue, longitude);
+								dispatch(
+									coordsChanged({
+										...coords,
+										latitude: fieldValue,
+									})
+								);
 								return;
 							}
 							if (!textInputRegexp.test(fieldValue)) return;
-							const value = parseCoordinate(event.target.value);
-							if (value <= 90) {
-								dispatchCoords(fieldValue, longitude);
+							const parsedValue = parseCoordinate(event.target.value);
+							if (parsedValue <= 90) {
+								dispatch(
+									coordsChanged({
+										...coords,
+										latitude: fieldValue,
+									})
+								);
 								dispatch(shouldCenter());
 							}
 						}}
@@ -52,20 +51,29 @@ export default function Form() {
 					<FormInput
 						labelText=""
 						id="longitude"
-						dispatchType="longitude"
+						name="longitude"
 						placeholder="Введите долготу"
-						value={longitude ?? ''}
-						coordinate={longitude}
+						value={coords.longitude ?? ''}
 						onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
 							const { value: fieldValue } = event.target;
 							if (!fieldValue) {
-								dispatchCoords(latitude, fieldValue);
+								dispatch(
+									coordsChanged({
+										...coords,
+										longitude: fieldValue,
+									})
+								);
 								return;
 							}
 							if (!textInputRegexp.test(fieldValue)) return;
-							const value = parseCoordinate(fieldValue);
-							if (value <= 180) {
-								dispatchCoords(latitude, fieldValue);
+							const parsedValue = parseCoordinate(fieldValue);
+							if (parsedValue <= 180) {
+								dispatch(
+									coordsChanged({
+										...coords,
+										longitude: fieldValue,
+									})
+								);
 								dispatch(shouldCenter());
 							}
 						}}
@@ -77,13 +85,12 @@ export default function Form() {
 }
 
 type FormInputProps = {
-	labelText: string;
 	id: string;
+	labelText: string;
+	name: string;
 	placeholder: string;
 	value: string | number;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	coordinate: string;
-	dispatchType: string;
 };
 
 type Sign = 'plus' | 'minus';
@@ -91,6 +98,7 @@ type Sign = 'plus' | 'minus';
 export function FormInput(props: FormInputProps) {
 	const dispatch = useAppDispatch();
 
+	const coords = useAppSelector((state) => state.coords);
 	const { latitude, longitude } = useAppSelector((state) => state.coords);
 	const parsedLatitude = parseCoordinate(latitude);
 	const parsedLongitude = parseCoordinate(longitude);
@@ -116,22 +124,22 @@ export function FormInput(props: FormInputProps) {
 		const action = keyActionMap[key];
 		if (!action) return;
 
-		if (props.dispatchType == 'latitude') {
+		if (props.name === 'latitude') {
 			dispatch(
 				coordsChanged({
+					...coords,
 					latitude: adjustCoordinate(
 						parsedLatitude,
 						changeValue,
 						action
 					).toString(),
-					longitude: longitude,
 				})
 			);
 		}
-		if (props.dispatchType == 'longitude') {
+		if (props.name === 'longitude') {
 			dispatch(
 				coordsChanged({
-					latitude: latitude,
+					...coords,
 					longitude: adjustCoordinate(
 						parsedLongitude,
 						changeValue,
@@ -151,6 +159,7 @@ export function FormInput(props: FormInputProps) {
 				className="px-3 py-1 border rounded-md disabled:bg-white"
 				autoComplete="off"
 				id={props.id}
+				name={props.name}
 				placeholder={props.placeholder}
 				value={props.value}
 				onChange={props.onChange}
