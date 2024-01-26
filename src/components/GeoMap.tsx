@@ -24,7 +24,7 @@ export default function GeoMap() {
 	const mapRef = useRef<MapObject>();
 
 	const coords = useAppSelector((state) => state.coords);
-	
+
 	const latitude = parseCoordinate(coords.latitude);
 	const longitude = parseCoordinate(coords.longitude);
 	const shouldCenter = useAppSelector((state) => state.map.center);
@@ -59,6 +59,7 @@ export default function GeoMap() {
 	useEffect(() => {
 		setTimeout(() => {
 			handleCircle();
+			setPageLoading(false);
 		}, 1000);
 	}, []);
 
@@ -69,14 +70,8 @@ export default function GeoMap() {
 
 		map.setCenter([latitude, longitude], 9, {
 			duration: 300,
-		});
-
-		setTimeout(() => dispatch(shouldNotCenter()), 1000);
-	}, [mapRef.current, shouldCenter]);
-
-	useEffect(() => {
-		setTimeout(() => setPageLoading(false), 1000);
-	}, []);
+		});;
+	}, [mapRef.current, shouldCenter, coords]);
 
 	return (
 		<>

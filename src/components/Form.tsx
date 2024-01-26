@@ -1,7 +1,9 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
-import { shouldCenter } from '../redux/slices/mapSlice';
+import { shouldCenter, shouldNotCenter } from '../redux/slices/mapSlice';
 import { parseCoordinate, roundCoordinate } from './parseCoordinate';
+import { useEffect } from 'react';
+import _ from 'lodash';
 
 const textInputRegexp = /^[0-9.]*$/;
 
@@ -19,8 +21,6 @@ export default function Form() {
 			>
 				<div className="flex flex-wrap justify-between">
 					<FormInput
-						labelText=""
-						id="latitude"
 						name="latitude"
 						placeholder="Введите широту"
 						value={coords.latitude ?? ''}
@@ -44,13 +44,10 @@ export default function Form() {
 										latitude: fieldValue,
 									})
 								);
-								dispatch(shouldCenter());
 							}
 						}}
 					/>
 					<FormInput
-						labelText=""
-						id="longitude"
 						name="longitude"
 						placeholder="Введите долготу"
 						value={coords.longitude ?? ''}
@@ -74,7 +71,6 @@ export default function Form() {
 										longitude: fieldValue,
 									})
 								);
-								dispatch(shouldCenter());
 							}
 						}}
 					/>
@@ -85,8 +81,6 @@ export default function Form() {
 }
 
 type FormInputProps = {
-	id: string;
-	labelText: string;
 	name: string;
 	placeholder: string;
 	value: string | number;
@@ -98,6 +92,7 @@ type Sign = 'plus' | 'minus';
 export function FormInput(props: FormInputProps) {
 	const dispatch = useAppDispatch();
 
+	const center = useAppSelector((state) => state.map.center);
 	const coords = useAppSelector((state) => state.coords);
 	const { latitude, longitude } = useAppSelector((state) => state.coords);
 	const parsedLatitude = parseCoordinate(latitude);
@@ -120,7 +115,23 @@ export function FormInput(props: FormInputProps) {
 		ArrowDown: 'minus',
 	};
 
+	const dispatchShouldNotCenter = () => {
+		dispatch(shouldNotCenter());
+	};
+
+	useEffect(() => {
+		const debouncedDispatchShouldNotCenter = _.debounce(
+			dispatchShouldNotCenter,
+			300
+		);
+		debouncedDispatchShouldNotCenter();
+		return () => {
+			debouncedDispatchShouldNotCenter.cancel();
+		};
+	}, [center]);
+
 	const onKeyPress: React.KeyboardEventHandler = ({ key }) => {
+		dispatch(shouldCenter());
 		const action = keyActionMap[key];
 		if (!action) return;
 
@@ -151,20 +162,14 @@ export function FormInput(props: FormInputProps) {
 	};
 
 	return (
-		<div className="flex flex-col w-[47.5%]">
-			<label className=" text-white " htmlFor={props.id}>
-				{props.labelText}
-			</label>
-			<input
-				className="px-3 py-1 border rounded-md disabled:bg-white"
-				autoComplete="off"
-				id={props.id}
-				name={props.name}
-				placeholder={props.placeholder}
-				value={props.value}
-				onChange={props.onChange}
-				onKeyDown={onKeyPress}
-			/>
-		</div>
+		<input
+			className="w-[47.5%] px-3 py-1 border rounded-md disabled:bg-white"
+			autoComplete="off"
+			name={props.name}
+			placeholder={props.placeholder}
+			value={props.value}
+			onChange={props.onChange}
+			onKeyDown={onKeyPress}
+		/>
 	);
 }
