@@ -1,30 +1,32 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { modalValuesChanged } from '../redux/slices/settingSlice';
+import { modalPositionChanged } from '../redux/slices/settingSlice';
+import { useEffect, useState } from 'react';
+import _ from 'lodash';
 export default function ModalWindowTemplate() {
 	return (
 		<>
 			<ModalPreview
 				position={{
-					modalFirstValue: 'top-[10px]',
-					modalSecondValue: 'right-[10px]',
+					vertical: 'top',
+					horizontal: 'right',
 				}}
 			/>
 			<ModalPreview
 				position={{
-					modalFirstValue: 'top-[10px]',
-					modalSecondValue: 'left-[10px]',
+					vertical: 'top',
+					horizontal: 'left',
 				}}
 			/>
 			<ModalPreview
 				position={{
-					modalFirstValue: 'bottom-[10px]',
-					modalSecondValue: 'right-[10px]',
+					vertical: 'bottom',
+					horizontal: 'right',
 				}}
 			/>
 			<ModalPreview
 				position={{
-					modalFirstValue: 'bottom-[10px]',
-					modalSecondValue: 'left-[10px]',
+					vertical: 'bottom',
+					horizontal: 'left',
 				}}
 			/>
 		</>
@@ -33,8 +35,8 @@ export default function ModalWindowTemplate() {
 
 type ModalPreviewProps = {
 	position: {
-		modalFirstValue: string;
-		modalSecondValue: string;
+		vertical: string;
+		horizontal: string;
 	};
 };
 
@@ -44,22 +46,38 @@ export function ModalPreview(props: ModalPreviewProps) {
 		(state) => state.settings.settingsBoolean
 	);
 
+	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
+
 	return (
 		<button
 			className={`
-			${props.position.modalFirstValue}
-			${props.position.modalSecondValue}
-			${
-				settingsBoolean === false ? 'opacity-0 pointer-events-none' : ''
-			} w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition`}
-			title={`${props.position.modalFirstValue}, ${props.position.modalSecondValue}`}
+			${!settingsBoolean ? 'opacity-0 pointer-events-none' : ''}
+			w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition max-[1023px]:hidden`}
+			style={{
+				top:
+					props.position.vertical === 'top' ? modalPosition.value : undefined,
+				bottom:
+					props.position.vertical === 'bottom'
+						? modalPosition.value
+						: undefined,
+				left:
+					props.position.horizontal === 'left'
+						? modalPosition.value
+						: undefined,
+				right:
+					props.position.horizontal === 'right'
+						? modalPosition.value
+						: undefined,
+			}}
+			title={`${props.position.vertical}, ${props.position.horizontal}`}
 			type="button"
-			disabled={settingsBoolean === false}
+			disabled={!settingsBoolean}
 			onClick={() => {
 				dispatch(
-					modalValuesChanged({
-						modalFirstValue: props.position.modalFirstValue,
-						modalSecondValue: props.position.modalSecondValue,
+					modalPositionChanged({
+						...modalPosition,
+						vertical: props.position.vertical,
+						horizontal: props.position.horizontal,
 					})
 				);
 			}}

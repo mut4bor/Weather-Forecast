@@ -89,7 +89,7 @@ const Weather = () => {
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
-	if (data && !isErrorResponse(data) && data.name == '') {
+	if (data && !isErrorResponse(data) && data.name === '') {
 		return (
 			<div>
 				<div className=" font-semibold ">
@@ -131,7 +131,7 @@ export function BodyWeather({ data }: WeatherProps) {
 		'50n': Fog,
 	} as Record<string, string>;
 
-	const weatherIconHandler = () => {
+	const titleHandler = () => {
 		if (data && !isErrorResponse(data)) {
 			const faviconLinkTagList = document.querySelectorAll(
 				'link[rel="icon"], link[rel="shortcut icon"]'
@@ -139,25 +139,28 @@ export function BodyWeather({ data }: WeatherProps) {
 			faviconLinkTagList.forEach(function (element) {
 				element.setAttribute('href', iconMap[data.weather[0].icon]);
 			});
-			if (data.name == '') {
-				document.title = `Weather Forecast by mut4bor`;
-				return;
-			}
-			document.title = `${data.name} – Weather Forecast by mut4bor`;
+
+			data.name !== ''
+				? (document.title = `${data.name} – Weather Forecast by mut4bor`)
+				: (document.title = `Weather Forecast by mut4bor`);
 		}
 	};
 
-	useEffect(weatherIconHandler, [data]);
+	useEffect(titleHandler, [data]);
 
 	return (
 		<>
 			{data && !isErrorResponse(data) && (
-				<div className="flex flex-row">
-					<div className=" h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
+				<div className="flex flex-row items-center">
+					<div className="h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
 						{Math.round(data.main.temp)}°
 					</div>
 					<div className="w-[80px] h-[57px] object-cover">
-						<img className="h-[100%]" src={iconMap[data.weather[0].icon]} />
+						<img
+							className="h-[100%]"
+							src={iconMap[data.weather[0].icon]}
+							alt="Weather icon"
+						/>
 					</div>
 					<div className="flex flex-col">
 						<span>
@@ -179,7 +182,7 @@ export function FooterWeather({ data }: WeatherProps) {
 	return (
 		<>
 			{data && (
-				<div className="flex flex-row gap-5">
+				<div className="flex flex-row gap-5 mb-2">
 					<FooterInfo
 						href={'#wind'}
 						dataElement={data.wind.speed}

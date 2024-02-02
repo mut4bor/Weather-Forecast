@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const settingSlice = createSlice({
 	name: 'settings',
@@ -6,9 +6,10 @@ const settingSlice = createSlice({
 	initialState: {
 		settingsBoolean: false,
 		cacheBoolean: true,
-		modalValues: {
-			modalFirstValue: 'top-[10px]',
-			modalSecondValue: 'right-[10px]',
+		modalPosition: {
+			vertical: 'top',
+			horizontal: 'right',
+			value: '10px',
 		},
 	},
 
@@ -19,8 +20,8 @@ const settingSlice = createSlice({
 		cacheBooleanToggled(state, action) {
 			state.cacheBoolean = action.payload;
 		},
-		modalValuesChanged(state, action) {
-			state.modalValues = action.payload;
+		modalPositionChanged(state, action) {
+			state.modalPosition = action.payload;
 		},
 	},
 });
@@ -28,6 +29,6 @@ const settingSlice = createSlice({
 export const {
 	settingsToggled,
 	cacheBooleanToggled,
-	modalValuesChanged,
+	modalPositionChanged,
 } = settingSlice.actions;
 export default settingSlice.reducer;

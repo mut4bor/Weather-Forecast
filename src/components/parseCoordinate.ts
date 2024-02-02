@@ -7,6 +7,7 @@ export function roundCoordinate(
 	incomeValue: number,
 	roundAmount: number
 ): number {
-	const result = Math.round(incomeValue * roundAmount) / roundAmount;
-	return result;
+	return roundAmount !== 0
+		? Math.round(incomeValue * roundAmount) / roundAmount
+		: incomeValue;
 }
