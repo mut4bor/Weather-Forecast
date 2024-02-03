@@ -9,12 +9,12 @@ import { SVG } from './Weather';
 import _ from 'lodash';
 
 export default function Settings() {
+	const dispatch = useAppDispatch();
 	const settingsBoolean = useAppSelector(
 		(state) => state.settings.settingsBoolean
 	);
 	const cacheBoolean = useAppSelector((state) => state.settings.cacheBoolean);
 
-	const dispatch = useAppDispatch();
 	const storedSettings = localStorage.getItem('settingsBoolean');
 	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
 
@@ -49,47 +49,13 @@ export default function Settings() {
 						/>
 						<label htmlFor="cacheToggle">Сохранять последний запрос</label>
 					</li>
-					<li className="text-[18px] mt-3 lg:hidden">
+					<li className="text-[18px] mt-3 lg:hidden flex flex-col">
 						<p>Позиция модального окна:</p>
-						<input
-							checked={modalPosition.vertical === 'top'}
-							type="radio"
-							name="modalPosition"
-							id="top"
-							value="top"
-							className="checkbox"
-							disabled={!settingsBoolean}
-							onChange={(e) =>
-								dispatch(
-									modalPositionChanged({
-										...modalPosition,
-										vertical: e.target.value,
-									})
-								)
-							}
-						/>
-						<label htmlFor="top">Сверху</label>
-						<br />
-						<input
-							checked={modalPosition.vertical === 'bottom'}
-							type="radio"
-							name="modalPosition"
-							id="bottom"
-							value="bottom"
-							className="checkbox"
-							disabled={!settingsBoolean}
-							onChange={(e) =>
-								dispatch(
-									modalPositionChanged({
-										...modalPosition,
-										vertical: e.target.value,
-									})
-								)
-							}
-						/>
-						<label htmlFor="bottom">Снизу</label>
+						<RadioVerticalPicker value="top" />
+						<RadioVerticalPicker value="bottom" />
 					</li>
 				</ul>
+
 				<div className="flex justify-between w-[50%] mx-auto">
 					<button
 						className="border px-3 py-1 rounded bg-white w-[100%] text-[#101d29]"
@@ -106,6 +72,7 @@ export default function Settings() {
 					</button>
 				</div>
 			</div>
+
 			<button
 				className="absolute top-4 right-4"
 				type="button"
@@ -120,6 +87,45 @@ export default function Settings() {
 					useClassName={''}
 				/>
 			</button>
+		</>
+	);
+}
+
+type RadioVerticalPickerProps = {
+	value: 'top' | 'bottom';
+};
+
+export function RadioVerticalPicker(props: RadioVerticalPickerProps) {
+	const dispatch = useAppDispatch();
+	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
+	const settingsBoolean = useAppSelector(
+		(state) => state.settings.settingsBoolean
+	);
+	return (
+		<>
+			<input
+				checked={
+					props.value === 'top'
+						? modalPosition.vertical === 'top'
+						: modalPosition.vertical === 'bottom'
+				}
+				type="radio"
+				name="modalVerticalPosition"
+				id={`modalVertical${props.value}`}
+				className="checkbox"
+				disabled={!settingsBoolean}
+				onChange={() => {
+					dispatch(
+						modalPositionChanged({
+							...modalPosition,
+							vertical: props.value,
+						})
+					);
+				}}
+			/>
+			<label htmlFor={`modalVertical${props.value}`}>
+				{modalPosition.vertical === 'top' ? 'Сверху' : 'Снизу'}
+			</label>
 		</>
 	);
 }
