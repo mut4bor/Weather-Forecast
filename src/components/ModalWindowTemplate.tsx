@@ -46,15 +46,15 @@ export function ModalPreview(props: ModalPreviewProps) {
 	);
 
 	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
-	const { value } = modalPosition;
+
 	const { vertical, horizontal } = props.position;
 
 	return (
 		<button
 			className={`
 			${!settingsBoolean ? 'opacity-0 pointer-events-none' : ''}
-			${vertical === 'top' ? `top-[${value}]` : `bottom-[${value}]`}
-			${horizontal === 'left' ? `left-[${value}]` : `right-[${value}]`}
+			${vertical === 'top' ? `top-[10px]` : `bottom-[10px]`}
+			${horizontal === 'left' ? `left-[10px]` : `right-[10px]`}
 			w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition max-[1023px]:hidden`}
 			title={`${vertical === 'top' ? 'Сверху' : 'Снизу'}, ${
 				horizontal === 'left' ? 'слева' : 'справа'

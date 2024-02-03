@@ -9,7 +9,6 @@ const settingSlice = createSlice({
 		modalPosition: {
 			vertical: 'top',
 			horizontal: 'right',
-			value: '10px',
 		},
 	},
 

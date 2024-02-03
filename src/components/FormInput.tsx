@@ -38,12 +38,15 @@ export default function FormInput(props: FormInputProps) {
 		};
 	}, [center]);
 
-	const onKeyPress: React.KeyboardEventHandler = ({
-		key,
-	}): number | undefined => {
+	const onKeyPress: React.KeyboardEventHandler = (event): void => {
+		const { key } = event;
+		
 		dispatch(shouldCenter());
 		const action = keyActionMap[key];
 		if (!action) return;
+		if (key === 'ArrowUp') {
+			event.preventDefault();
+		}
 
 		const adjustCoordinate = (coord: string): string => {
 			return action === 'plus'
