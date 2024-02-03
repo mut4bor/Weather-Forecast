@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { modalPositionChanged } from '../redux/slices/settingSlice';
-import { useEffect, useState } from 'react';
 import _ from 'lodash';
 export default function ModalWindowTemplate() {
 	return (
@@ -47,37 +46,27 @@ export function ModalPreview(props: ModalPreviewProps) {
 	);
 
 	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
+	const { value } = modalPosition;
+	const { vertical, horizontal } = props.position;
 
 	return (
 		<button
 			className={`
 			${!settingsBoolean ? 'opacity-0 pointer-events-none' : ''}
+			${vertical === 'top' ? `top-[${value}]` : `bottom-[${value}]`}
+			${horizontal === 'left' ? `left-[${value}]` : `right-[${value}]`}
 			w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition max-[1023px]:hidden`}
-			style={{
-				top:
-					props.position.vertical === 'top' ? modalPosition.value : undefined,
-				bottom:
-					props.position.vertical === 'bottom'
-						? modalPosition.value
-						: undefined,
-				left:
-					props.position.horizontal === 'left'
-						? modalPosition.value
-						: undefined,
-				right:
-					props.position.horizontal === 'right'
-						? modalPosition.value
-						: undefined,
-			}}
-			title={`${props.position.vertical}, ${props.position.horizontal}`}
+			title={`${vertical === 'top' ? 'Сверху' : 'Снизу'}, ${
+				horizontal === 'left' ? 'слева' : 'справа'
+			}`}
 			type="button"
 			disabled={!settingsBoolean}
 			onClick={() => {
 				dispatch(
 					modalPositionChanged({
 						...modalPosition,
-						vertical: props.position.vertical,
-						horizontal: props.position.horizontal,
+						vertical: vertical,
+						horizontal: horizontal,
 					})
 				);
 			}}

@@ -7,8 +7,9 @@ type ModalWindowProps = {
 };
 
 export default function ModalWindow(props: ModalWindowProps) {
-	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
 	const dispatch = useAppDispatch();
+	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
+	const { vertical, horizontal, value } = modalPosition;
 
 	const storedModalPosition = localStorage.getItem('modalPosition');
 	const parsedModalPosition = storedModalPosition
@@ -31,23 +32,10 @@ export default function ModalWindow(props: ModalWindowProps) {
 		<>
 			<div
 				id="modalWindow"
-				className={`lg:w-[500px] max-[1023px]:w-[calc(100%-20px)] min-h-[200px] absolute flex flex-col flex-wrap p-6 justify-between z-50 bg-[#101d29] overflow-hidden rounded-lg`}
-				style={{
-					top:
-						modalPosition.vertical === 'top' ? modalPosition.value : undefined,
-					bottom:
-						modalPosition.vertical === 'bottom'
-							? modalPosition.value
-							: undefined,
-					left:
-						modalPosition.horizontal === 'left'
-							? modalPosition.value
-							: undefined,
-					right:
-						modalPosition.horizontal === 'right'
-							? modalPosition.value
-							: undefined,
-				}}
+				className={`
+				${vertical === 'top' ? `top-[${value}]` : `bottom-[${value}]`}
+				${horizontal === 'left' ? `left-[${value}]` : `right-[${value}]`}
+				lg:w-[500px] max-[1023px]:w-[calc(100%-20px)] min-h-[200px] absolute flex flex-col flex-wrap p-6 justify-between z-50 bg-[#101d29] overflow-hidden rounded-lg`}
 			>
 				{props.children}
 			</div>

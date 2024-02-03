@@ -25,7 +25,7 @@ export default function FormInput(props: FormInputProps) {
 	const coords = useAppSelector((state) => state.coords);
 
 	useEffect(() => {
-		const dispatchShouldNotCenter = () => {
+		const dispatchShouldNotCenter = (): void => {
 			dispatch(shouldNotCenter());
 		};
 		const debouncedDispatchShouldNotCenter = _.debounce(
@@ -38,7 +38,9 @@ export default function FormInput(props: FormInputProps) {
 		};
 	}, [center]);
 
-	const onKeyPress: React.KeyboardEventHandler = ({ key }) => {
+	const onKeyPress: React.KeyboardEventHandler = ({
+		key,
+	}): number | undefined => {
 		dispatch(shouldCenter());
 		const action = keyActionMap[key];
 		if (!action) return;
@@ -79,7 +81,7 @@ export default function FormInput(props: FormInputProps) {
 			}`}
 			value={props.name === 'latitude' ? coords.latitude : coords.longitude}
 			onKeyDown={onKeyPress}
-			onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+			onChange={(event: React.ChangeEvent<HTMLInputElement>): void => {
 				const { value: fieldValue } = event.target;
 
 				if (!fieldValue) {
