@@ -1,5 +1,5 @@
-export function parseCoordinate(string: string): number {
-	const result = parseFloat(string.trim());
+export function parseCoordinate(value: string | number): number {
+	const result = typeof value === 'string' ? parseFloat(value.trim()) : value;
 	return Number.isNaN(result) ? 0 : result;
 }
 

@@ -11,7 +11,7 @@ type FormInputProps = {
 
 type Sign = 'plus' | 'minus';
 
-const textInputRegexp = /^[0-9.]*$/;
+const textInputRegexp = /^-?[0-9.]*$/;
 
 const keyActionMap: Record<string, Sign> = {
 	ArrowUp: 'plus',
@@ -40,7 +40,7 @@ export default function FormInput(props: FormInputProps) {
 
 	const onKeyPress: React.KeyboardEventHandler = (event): void => {
 		const { key } = event;
-		
+
 		dispatch(shouldCenter());
 		const action = keyActionMap[key];
 		if (!action) return;
@@ -108,11 +108,13 @@ export default function FormInput(props: FormInputProps) {
 					}
 				}
 
-				if (!textInputRegexp.test(fieldValue)) return;
+				if (!textInputRegexp.test(fieldValue)) {
+					return;
+				}
 
 				const parsedValue = parseCoordinate(event.target.value);
 
-				if (parsedValue <= (props.name === 'latitude' ? 90 : 180)) {
+				if (Math.abs(parsedValue) <= (props.name === 'latitude' ? 90 : 180)) {
 					if (props.name === 'latitude') {
 						dispatch(
 							coordsChanged({

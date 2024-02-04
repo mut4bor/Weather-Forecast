@@ -16,6 +16,7 @@ import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
 import _ from 'lodash';
 import { coordsChanged } from '../redux/slices/coordsSlice';
+import { parseCoordinate } from './parseCoordinate';
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
 };
@@ -52,12 +53,20 @@ const Weather = () => {
 		}
 	}, [cacheBoolean]);
 
+
+	//! need to rework the fetch conditions and 0 caching
+	const dispatchDataCondition = () => {
+		return coords.latitude && coords.longitude ? true : false;
+	};
+
 	const dispatchData = () => {
-		if (coords.latitude && coords.longitude) {
+		if (dispatchDataCondition()) {
 			dispatch(
 				fetchData({
-					latitude: parseFloat(coords.latitude),
-					longitude: parseFloat(coords.longitude),
+					latitude: parseCoordinate(
+						coords.latitude == '' ? 0 : coords.latitude
+					),
+					longitude: parseCoordinate(coords.longitude),
 				})
 			);
 		}
