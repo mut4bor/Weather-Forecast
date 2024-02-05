@@ -1,11 +1,11 @@
 import './App.css';
+import ModalWindow from './components/ModalWindow';
+import Loading from './components/Loading';
 import Weather from './components/Weather';
 import Form from './components/Form';
-import GeoMap from './components/GeoMap';
-import Loading from './components/Loading';
 import Settings from './components/Settings';
+import GeoMap from './components/GeoMap';
 import ModalWindowTemplate from './components/ModalWindowTemplate';
-import ModalWindow from './components/ModalWindow';
 
 function App() {
 	return (

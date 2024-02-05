@@ -16,7 +16,6 @@ export const fetchData = createAsyncThunk(
 		});
 
 		const response = await fetch(`${apiUrl}?${searchParams.toString()}`);
-		console.log('api call');
 		const data = await response.json();
 		return data;
 	}

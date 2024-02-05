@@ -5,7 +5,7 @@ import {
 	cacheBooleanToggled,
 	modalPositionChanged,
 } from '../redux/slices/settingSlice';
-import { SVG } from './Weather';
+import SVG from './SVG';
 import _ from 'lodash';
 
 export default function Settings() {
@@ -74,7 +74,7 @@ export default function Settings() {
 			</div>
 
 			<button
-				className="absolute top-4 right-4"
+				className="absolute top-6 right-6"
 				type="button"
 				title="Настройки"
 				onClick={() => {
@@ -83,7 +83,7 @@ export default function Settings() {
 			>
 				<SVG
 					href={'#settings'}
-					className={'w-[25px] h-[25px]'}
+					svgClassName={'w-[25px] h-[25px]'}
 					useClassName={''}
 				/>
 			</button>

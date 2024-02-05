@@ -34,13 +34,20 @@ export const { coordsChanged } = coordsSlice.actions;
 export default coordsSlice.reducer;
 
 export const coordsMiddleware: Middleware = (store) => (next) => (action) => {
-	const stateToSave = store.getState().coords;
+	const latitudeToSave = store.getState().coords.latitude as string;
+	const longitudeToSave = store.getState().coords.longitude;
 	const cacheBoolean = store.getState().settings.cacheBoolean;
 	const storedSettings = localStorage.getItem('settingsBoolean');
 	const parsedSettings = storedSettings ? JSON.parse(storedSettings) : null;
 
 	if (parsedSettings === true || cacheBoolean === true) {
-		localStorage.setItem('coords', JSON.stringify(stateToSave));
+		localStorage.setItem(
+			'coords',
+			JSON.stringify({
+				latitude: latitudeToSave === '' ? '0' : latitudeToSave,
+				longitude: longitudeToSave === '' ? '0' : longitudeToSave,
+			})
+		);
 	}
 
 	return next(action);

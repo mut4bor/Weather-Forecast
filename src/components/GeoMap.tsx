@@ -3,7 +3,7 @@ import { YMaps, Map, Circle } from '@pbe/react-yandex-maps';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
-import { shouldNotCenter } from '../redux/slices/mapSlice';
+import { shouldNotCenter, zoomChanged } from '../redux/slices/mapSlice';
 import _ from 'lodash';
 type GeoObject = {
 	events: {
@@ -16,6 +16,7 @@ type MapObject = {
 		add: Function;
 	};
 	setCenter: Function;
+	getZoom: Function;
 };
 
 export default function GeoMap() {
@@ -23,11 +24,11 @@ export default function GeoMap() {
 	const circleRef = useRef<GeoObject>();
 	const mapRef = useRef<MapObject>();
 
-	const coords = useAppSelector((state) => state.coords);
+	const { latitude, longitude } = useAppSelector((state) => state.coords);
 
-	const latitude = parseCoordinate(coords.latitude);
-	const longitude = parseCoordinate(coords.longitude);
-	const shouldCenter = useAppSelector((state) => state.map.center);
+	const parsedLatitude = parseCoordinate(latitude);
+	const parsedLongitude = parseCoordinate(longitude);
+	const { centerBoolean, zoom } = useAppSelector((state) => state.map);
 	const [pageLoading, setPageLoading] = useState(true);
 
 	const handleCircleDrag = useCallback((event: any) => {
@@ -38,12 +39,14 @@ export default function GeoMap() {
 
 		if (coordinates) {
 			const roundAmount = 10000;
-			const latitude = Math.round(coordinates[0] * roundAmount) / roundAmount;
-			const longitude = Math.round(coordinates[1] * roundAmount) / roundAmount;
+			const roundedLatitude =
+				Math.round(coordinates[0] * roundAmount) / roundAmount;
+			const roundedLongitude =
+				Math.round(coordinates[1] * roundAmount) / roundAmount;
 			dispatch(
 				coordsChanged({
-					latitude: latitude.toString(),
-					longitude: longitude.toString(),
+					latitude: roundedLatitude.toString(),
+					longitude: roundedLongitude.toString(),
 				})
 			);
 		}
@@ -65,13 +68,30 @@ export default function GeoMap() {
 
 	useEffect(() => {
 		if (mapRef.current == null) return;
-		if (!shouldCenter) return;
-		const map = mapRef.current;
+		if (!centerBoolean) return;
 
-		map.setCenter([latitude, longitude], 9, {
+		const mapZoom = mapRef.current.getZoom() as number;
+
+		dispatch(zoomChanged(mapZoom));
+
+		mapRef.current.setCenter([parsedLatitude, parsedLongitude], zoom, {
 			duration: 300,
-		});;
-	}, [mapRef.current, shouldCenter, coords]);
+		});
+	}, [mapRef.current, centerBoolean, latitude, longitude]);
+
+	useEffect(() => {
+		const dispatchShouldNotCenter = () => {
+			dispatch(shouldNotCenter());
+		};
+		const debouncedDispatchShouldNotCenter = _.debounce(
+			dispatchShouldNotCenter,
+			300
+		);
+		debouncedDispatchShouldNotCenter();
+		return () => {
+			debouncedDispatchShouldNotCenter.cancel();
+		};
+	}, [centerBoolean]);
 
 	return (
 		<>
@@ -83,8 +103,8 @@ export default function GeoMap() {
 				<YMaps>
 					<Map
 						defaultState={{
-							center: [latitude, longitude],
-							zoom: 9,
+							center: [parsedLatitude, parsedLongitude],
+							zoom: zoom,
 							controls: ['zoomControl'],
 						}}
 						options={{
@@ -97,7 +117,7 @@ export default function GeoMap() {
 						instanceRef={mapRef as any}
 					>
 						<Circle
-							geometry={[[latitude, longitude], 12000]}
+							geometry={[[parsedLatitude, parsedLongitude], 12000]}
 							options={{
 								draggable: true,
 								fillColor: '#DB709377',

@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import Date from '../components/Date';
 import ClearDay from '../icons/Clear.png';
 import ClearNight from '../icons/MostlyClearNight.png';
@@ -12,11 +10,15 @@ import Thunderstorm from '../icons/Thunderstorm.png';
 import Rain from '../icons/Drizzle.png';
 import HeavyRain from '../icons/HeavyRain.png';
 import BrokenClouds from '../icons/Cloudy.png';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { WeatherAPIResponse, isErrorResponse } from '../redux/weatherTypes';
 import { fetchData } from '../redux/slices/weatherSlice';
-import _ from 'lodash';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
+import SVG from './SVG';
+import _ from 'lodash';
+
 type WeatherProps = {
 	data: WeatherAPIResponse | undefined;
 };
@@ -53,23 +55,15 @@ const Weather = () => {
 		}
 	}, [cacheBoolean]);
 
-
 	//! need to rework the fetch conditions and 0 caching
-	const dispatchDataCondition = () => {
-		return coords.latitude && coords.longitude ? true : false;
-	};
 
 	const dispatchData = () => {
-		if (dispatchDataCondition()) {
-			dispatch(
-				fetchData({
-					latitude: parseCoordinate(
-						coords.latitude == '' ? 0 : coords.latitude
-					),
-					longitude: parseCoordinate(coords.longitude),
-				})
-			);
-		}
+		dispatch(
+			fetchData({
+				latitude: parseCoordinate(coords.latitude),
+				longitude: parseCoordinate(coords.longitude),
+			})
+		);
 	};
 
 	useEffect(() => {
@@ -221,7 +215,7 @@ export function FooterInfo(props: FooterInfoProps) {
 	return (
 		<div className="flex flex-row">
 			<SVG
-				className="w-[24px] h-[24px] mr-1 opacity-60"
+				svgClassName="w-[24px] h-[24px] mr-1 opacity-60"
 				href={props.href}
 				useClassName=""
 			/>
@@ -229,20 +223,6 @@ export function FooterInfo(props: FooterInfoProps) {
 			{!!props.spaceSymbol ? ' ' : ''}
 			{props.measure}
 		</div>
-	);
-}
-
-type SVGProps = {
-	href: string;
-	className: string;
-	useClassName: string;
-};
-
-export function SVG(props: SVGProps) {
-	return (
-		<svg className={props.className}>
-			<use className={props.useClassName} href={props.href} />
-		</svg>
 	);
 }
 
