@@ -1,7 +1,7 @@
 type SVGProps = {
 	href: string;
-	svgClassName: string;
-	useClassName: string;
+	svgClassName?: string;
+	useClassName?: string;
 };
 
 export default function SVG(props: SVGProps) {

@@ -81,11 +81,7 @@ export default function Settings() {
 					dispatch(settingsToggled(true));
 				}}
 			>
-				<SVG
-					href={'#settings'}
-					svgClassName={'w-[25px] h-[25px]'}
-					useClassName={''}
-				/>
+				<SVG href={'#settings'} svgClassName={'w-[25px] h-[25px]'} />
 			</button>
 		</>
 	);

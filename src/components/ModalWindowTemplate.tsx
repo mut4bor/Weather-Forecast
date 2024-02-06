@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { modalPositionChanged } from '../redux/slices/settingSlice';
 import _ from 'lodash';
+
 export default function ModalWindowTemplate() {
 	return (
 		<>
@@ -55,7 +56,7 @@ export function ModalPreview(props: ModalPreviewProps) {
 			${!settingsBoolean ? 'opacity-0 pointer-events-none' : ''}
 			${vertical === 'top' ? `top-[10px]` : `bottom-[10px]`}
 			${horizontal === 'left' ? `left-[10px]` : `right-[10px]`}
-			w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition max-[1023px]:hidden`}
+			w-[500px] h-[200px] absolute rounded-lg bg-green-700/[40%] transition max-lg:hidden`}
 			title={`${vertical === 'top' ? 'Сверху' : 'Снизу'}, ${
 				horizontal === 'left' ? 'слева' : 'справа'
 			}`}

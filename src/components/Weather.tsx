@@ -24,9 +24,9 @@ type WeatherProps = {
 };
 
 const Weather = () => {
+	const dispatch = useAppDispatch();
 	const data = useAppSelector((state) => state.weather.data);
 	const coords = useAppSelector((state) => state.coords);
-	const dispatch = useAppDispatch();
 
 	const storedCoords = localStorage.getItem('coords');
 	const parsedCoords = storedCoords ? JSON.parse(storedCoords) : null;
@@ -39,14 +39,17 @@ const Weather = () => {
 	const cacheBoolean = useAppSelector((state) => state.settings.cacheBoolean);
 
 	useEffect(() => {
-		if (parsedSettings === true || cacheBoolean === true) {
+		if (
 			cachedLatitude &&
-				dispatch(
-					coordsChanged({
-						latitude: cachedLatitude,
-						longitude: cachedLongitude,
-					})
-				);
+			cachedLongitude &&
+			(parsedSettings === true || cacheBoolean === true)
+		) {
+			dispatch(
+				coordsChanged({
+					latitude: cachedLatitude,
+					longitude: cachedLongitude,
+				})
+			);
 			return;
 		}
 		if (parsedSettings === false || cacheBoolean === false) {
@@ -54,8 +57,6 @@ const Weather = () => {
 			return;
 		}
 	}, [cacheBoolean]);
-
-	//! need to rework the fetch conditions and 0 caching
 
 	const dispatchData = () => {
 		dispatch(
@@ -76,36 +77,27 @@ const Weather = () => {
 
 	return (
 		<>
-			<div className=" text-white relative">
-				{data && isErrorResponse(data) && (
-					<>
-						<div>Error {data.cod}</div>
-						<div>{data.message}</div>
-					</>
-				)}
-				<HeaderWeather data={data} />
-				<BodyWeather data={data} />
-				<FooterWeather data={data} />
-			</div>
+			{data && isErrorResponse(data) && (
+				<>
+					<div>Error {data.cod}</div>
+					<div>{data.message}</div>
+				</>
+			)}
+			<HeaderWeather data={data} />
+			<BodyWeather data={data} />
+			<FooterWeather data={data} />
 		</>
 	);
 };
 
 export function HeaderWeather({ data }: WeatherProps) {
-	if (data && !isErrorResponse(data) && data.name === '') {
-		return (
-			<div>
-				<div className=" font-semibold ">
-					<Date />
-				</div>
-			</div>
-		);
-	}
 	return (
 		<>
 			{data && !isErrorResponse(data) && (
-				<div className=" font-semibold ">
-					{data.name.charAt(0).toUpperCase() + data.name.slice(1)}, <Date />
+				<div className="font-semibold text-white">
+					{data.name !== '' &&
+						data.name.charAt(0).toUpperCase() + data.name.slice(1) + ', '}
+					<Date />
 				</div>
 			)}
 		</>
@@ -143,9 +135,11 @@ export function BodyWeather({ data }: WeatherProps) {
 				element.setAttribute('href', iconMap[data.weather[0].icon]);
 			});
 
+			const defaultTitle = 'Weather Forecast by mut4bor';
+
 			data.name !== ''
-				? (document.title = `${data.name} – Weather Forecast by mut4bor`)
-				: (document.title = `Weather Forecast by mut4bor`);
+				? (document.title = `${data.name} – ${defaultTitle}`)
+				: (document.title = defaultTitle);
 		}
 	};
 
@@ -154,13 +148,11 @@ export function BodyWeather({ data }: WeatherProps) {
 	return (
 		<>
 			{data && !isErrorResponse(data) && (
-				<div className="flex flex-row items-center">
-					<div className="h-[48px] text-[48px] leading-[48px] flex items-center font-semibold">
-						{Math.round(data.main.temp)}°
-					</div>
-					<div className="w-[80px] h-[57px] object-cover">
+				<div className="flex min-[320px]:flex-col min-[425px]:flex-row text-white gap-y-2">
+					<div className="h-[48px] text-[48px] leading-[48px] flex items-center font-semibold mr-5">
+						<p>{Math.round(data.main.temp)}°</p>
 						<img
-							className="h-[100%]"
+							className="h-[55px]"
 							src={iconMap[data.weather[0].icon]}
 							alt="Weather icon"
 						/>
@@ -178,25 +170,19 @@ export function BodyWeather({ data }: WeatherProps) {
 	);
 }
 export function FooterWeather({ data }: WeatherProps) {
-	if (!data || isErrorResponse(data)) {
-		return null;
-	}
-
 	return (
 		<>
-			{data && (
-				<div className="flex flex-row gap-5 mb-2">
+			{data && !isErrorResponse(data) && (
+				<div className="flex flex-row gap-5 text-white">
 					<FooterInfo
-						href={'#wind'}
+						href="#wind"
 						dataElement={data.wind.speed}
-						spaceSymbol={true}
-						measure={`м/с`}
+						measure=" м/с"
 					/>
 					<FooterInfo
-						href={'#humidity'}
+						href="#humidity"
 						dataElement={data.main.humidity}
-						spaceSymbol={false}
-						measure={'%'}
+						measure="%"
 					/>
 				</div>
 			)}
@@ -208,19 +194,13 @@ type FooterInfoProps = {
 	href: string;
 	dataElement: number;
 	measure: string;
-	spaceSymbol: boolean;
 };
 
 export function FooterInfo(props: FooterInfoProps) {
 	return (
 		<div className="flex flex-row">
-			<SVG
-				svgClassName="w-[24px] h-[24px] mr-1 opacity-60"
-				href={props.href}
-				useClassName=""
-			/>
+			<SVG svgClassName="w-[24px] h-[24px] mr-1 opacity-60" href={props.href} />
 			{props.dataElement}
-			{!!props.spaceSymbol ? ' ' : ''}
 			{props.measure}
 		</div>
 	);

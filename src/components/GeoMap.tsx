@@ -3,11 +3,15 @@ import { YMaps, Map, Circle } from '@pbe/react-yandex-maps';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
-import { shouldNotCenter, zoomChanged } from '../redux/slices/mapSlice';
+import { centerBooleanToggle, zoomChanged } from '../redux/slices/mapSlice';
 import _ from 'lodash';
+
 type GeoObject = {
 	events: {
 		add: Function;
+	};
+	geometry: {
+		circle: Function;
 	};
 };
 
@@ -24,12 +28,14 @@ export default function GeoMap() {
 	const circleRef = useRef<GeoObject>();
 	const mapRef = useRef<MapObject>();
 
+	const [pageLoading, setPageLoading] = useState(true);
+	const [circleSize, setCircleSize] = useState(12000);
+
 	const { latitude, longitude } = useAppSelector((state) => state.coords);
+	const { centerBoolean, zoom } = useAppSelector((state) => state.map);
 
 	const parsedLatitude = parseCoordinate(latitude);
 	const parsedLongitude = parseCoordinate(longitude);
-	const { centerBoolean, zoom } = useAppSelector((state) => state.map);
-	const [pageLoading, setPageLoading] = useState(true);
 
 	const handleCircleDrag = useCallback((event: any) => {
 		const { target } = event?.originalEvent ?? {};
@@ -54,8 +60,7 @@ export default function GeoMap() {
 
 	function handleCircle() {
 		if (circleRef.current) {
-			const circle = circleRef.current;
-			circle.events.add('dragend', handleCircleDrag);
+			circleRef.current.events.add('dragend', handleCircleDrag);
 		}
 	}
 
@@ -70,18 +75,15 @@ export default function GeoMap() {
 		if (mapRef.current == null) return;
 		if (!centerBoolean) return;
 
-		const mapZoom = mapRef.current.getZoom() as number;
-
-		dispatch(zoomChanged(mapZoom));
-
 		mapRef.current.setCenter([parsedLatitude, parsedLongitude], zoom, {
 			duration: 300,
 		});
+		getCircleSize();
 	}, [mapRef.current, centerBoolean, latitude, longitude]);
 
 	useEffect(() => {
 		const dispatchShouldNotCenter = () => {
-			dispatch(shouldNotCenter());
+			dispatch(centerBooleanToggle(false));
 		};
 		const debouncedDispatchShouldNotCenter = _.debounce(
 			dispatchShouldNotCenter,
@@ -92,6 +94,43 @@ export default function GeoMap() {
 			debouncedDispatchShouldNotCenter.cancel();
 		};
 	}, [centerBoolean]);
+
+	//! андрей, приветик, сюда не смотри пока, еще не доделал
+	const getCircleSize = () => {
+		switch (zoom) {
+			case 3:
+				setCircleSize(360000);
+				break;
+			case 4:
+				setCircleSize(240000);
+				break;
+			case 5:
+				setCircleSize(80000);
+				break;
+			case 6:
+				setCircleSize(40000);
+				break;
+			case 7:
+				setCircleSize(24000);
+				break;
+			case 8:
+				setCircleSize(12000);
+				break;
+			case 9:
+				setCircleSize(6000);
+				break;
+			case 10:
+				setCircleSize(3000);
+				break;
+			case 11:
+				setCircleSize(3000);
+				break;
+
+			default:
+				setCircleSize(6000);
+				break;
+		}
+	};
 
 	return (
 		<>
@@ -109,7 +148,7 @@ export default function GeoMap() {
 						}}
 						options={{
 							minZoom: 3,
-							maxZoom: 23,
+							maxZoom: 11,
 						}}
 						modules={['control.ZoomControl']}
 						width={'100%'}
@@ -117,7 +156,7 @@ export default function GeoMap() {
 						instanceRef={mapRef as any}
 					>
 						<Circle
-							geometry={[[parsedLatitude, parsedLongitude], 12000]}
+							geometry={[[parsedLatitude, parsedLongitude], 80000]}
 							options={{
 								draggable: true,
 								fillColor: '#DB709377',

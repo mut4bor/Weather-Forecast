@@ -2,11 +2,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useEffect } from 'react';
 import { modalPositionChanged } from '../redux/slices/settingSlice';
 
-type ModalWindowProps = {
-	children: React.ReactNode;
-};
-
-export default function ModalWindow(props: ModalWindowProps) {
+export default function ModalWindow(props: { children: React.ReactNode }) {
 	const dispatch = useAppDispatch();
 	const modalPosition = useAppSelector((state) => state.settings.modalPosition);
 	const { vertical, horizontal } = modalPosition;
@@ -35,7 +31,7 @@ export default function ModalWindow(props: ModalWindowProps) {
 				className={`
 				${vertical === 'top' ? `top-[10px]` : `bottom-[10px]`}
 				${horizontal === 'left' ? `left-[10px]` : `right-[10px]`}
-				lg:w-[500px] max-[1023px]:w-[calc(100%-20px)] min-h-[200px] absolute flex flex-col flex-wrap p-6 justify-between z-50 bg-[#101d29] overflow-hidden rounded-lg`}
+				lg:w-[500px] max-[1023px]:w-[calc(100%-20px)] min-h-[200px] absolute flex flex-col flex-wrap p-6 gap-2 z-50 bg-[#101d29] overflow-hidden rounded-lg`}
 			>
 				{props.children}
 			</div>

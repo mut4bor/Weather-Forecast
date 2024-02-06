@@ -5,15 +5,13 @@ export default function Form() {
 	return (
 		<>
 			<form
-				className="flex flex-col"
+				className="flex flex-row justify-between mt-auto"
 				onSubmit={(event: React.FormEvent) => {
 					event.preventDefault();
 				}}
 			>
-				<div className="flex flex-wrap justify-between">
-					<FormInput name="latitude" />
-					<FormInput name="longitude" />
-				</div>
+				<FormInput name="latitude" />
+				<FormInput name="longitude" />
 			</form>
 		</>
 	);

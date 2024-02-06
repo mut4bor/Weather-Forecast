@@ -1,12 +1,8 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { shouldCenter } from '../redux/slices/mapSlice';
+import { centerBooleanToggle } from '../redux/slices/mapSlice';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate, roundCoordinate } from './parseCoordinate';
 import _ from 'lodash';
-
-type FormInputProps = {
-	name: 'latitude' | 'longitude';
-};
 
 type Sign = 'plus' | 'minus';
 
@@ -17,7 +13,7 @@ const keyActionMap: Record<string, Sign> = {
 	ArrowDown: 'minus',
 };
 
-export default function FormInput(props: FormInputProps) {
+export default function FormInput(props: { name: 'latitude' | 'longitude' }) {
 	const dispatch = useAppDispatch();
 
 	const coords = useAppSelector((state) => state.coords);
@@ -26,7 +22,7 @@ export default function FormInput(props: FormInputProps) {
 		const { key } = event;
 		const action = keyActionMap[key];
 
-		dispatch(shouldCenter());
+		dispatch(centerBooleanToggle(true));
 
 		if (!action) return;
 

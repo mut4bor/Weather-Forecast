@@ -5,15 +5,12 @@ const mapSlice = createSlice({
 
 	initialState: {
 		centerBoolean: true,
-		zoom: 9,
+		zoom: 4,
 	},
 
 	reducers: {
-		shouldCenter(state) {
-			state.centerBoolean = true;
-		},
-		shouldNotCenter(state) {
-			state.centerBoolean = false;
+		centerBooleanToggle(state, action) {
+			state.centerBoolean = action.payload;
 		},
 		zoomChanged(state, action) {
 			state.zoom = action.payload;
@@ -21,5 +18,5 @@ const mapSlice = createSlice({
 	},
 });
 
-export const { shouldCenter, shouldNotCenter, zoomChanged } = mapSlice.actions;
+export const { centerBooleanToggle, zoomChanged } = mapSlice.actions;
 export default mapSlice.reducer;
