@@ -5,7 +5,8 @@ const mapSlice = createSlice({
 
 	initialState: {
 		centerBoolean: true,
-		zoom: 4,
+		zoom: 9,
+		circleSize: 3000,
 	},
 
 	reducers: {
@@ -14,9 +15,13 @@ const mapSlice = createSlice({
 		},
 		zoomChanged(state, action) {
 			state.zoom = action.payload;
+			console.log(action.payload);
+		},
+		circleSizeChanged(state, action) {
+			state.circleSize = action.payload;
 		},
 	},
 });
 
-export const { centerBooleanToggle, zoomChanged } = mapSlice.actions;
+export const { centerBooleanToggle, zoomChanged, circleSizeChanged } = mapSlice.actions;
 export default mapSlice.reducer;

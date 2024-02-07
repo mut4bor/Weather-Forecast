@@ -3,7 +3,11 @@ import { YMaps, Map, Circle } from '@pbe/react-yandex-maps';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { coordsChanged } from '../redux/slices/coordsSlice';
 import { parseCoordinate } from './parseCoordinate';
-import { centerBooleanToggle, zoomChanged } from '../redux/slices/mapSlice';
+import {
+	centerBooleanToggle,
+	zoomChanged,
+	circleSizeChanged,
+} from '../redux/slices/mapSlice';
 import _ from 'lodash';
 
 type GeoObject = {
@@ -29,10 +33,10 @@ export default function GeoMap() {
 	const mapRef = useRef<MapObject>();
 
 	const [pageLoading, setPageLoading] = useState(true);
-	const [circleSize, setCircleSize] = useState(12000);
 
 	const { latitude, longitude } = useAppSelector((state) => state.coords);
 	const { centerBoolean, zoom } = useAppSelector((state) => state.map);
+	const circleSize = useAppSelector((state) => state.map.circleSize);
 
 	const parsedLatitude = parseCoordinate(latitude);
 	const parsedLongitude = parseCoordinate(longitude);
@@ -64,9 +68,20 @@ export default function GeoMap() {
 		}
 	}
 
+	function handleMap() {
+		if (mapRef.current) {
+			mapRef.current.events.add('actionend', () => {
+				if (mapRef.current) {
+					dispatch(zoomChanged(mapRef.current.getZoom()));
+				}
+			});
+		}
+	}
+
 	useEffect(() => {
 		setTimeout(() => {
 			handleCircle();
+			handleMap();
 			setPageLoading(false);
 		}, 1000);
 	}, []);
@@ -78,7 +93,6 @@ export default function GeoMap() {
 		mapRef.current.setCenter([parsedLatitude, parsedLongitude], zoom, {
 			duration: 300,
 		});
-		getCircleSize();
 	}, [mapRef.current, centerBoolean, latitude, longitude]);
 
 	useEffect(() => {
@@ -95,42 +109,41 @@ export default function GeoMap() {
 		};
 	}, [centerBoolean]);
 
-	//! андрей, приветик, сюда не смотри пока, еще не доделал
-	const getCircleSize = () => {
+	useEffect(() => {
 		switch (zoom) {
 			case 3:
-				setCircleSize(360000);
+				dispatch(circleSizeChanged(360000));
 				break;
 			case 4:
-				setCircleSize(240000);
+				dispatch(circleSizeChanged(160000));
 				break;
 			case 5:
-				setCircleSize(80000);
+				dispatch(circleSizeChanged(80000));
 				break;
 			case 6:
-				setCircleSize(40000);
+				dispatch(circleSizeChanged(40000));
 				break;
 			case 7:
-				setCircleSize(24000);
+				dispatch(circleSizeChanged(24000));
 				break;
 			case 8:
-				setCircleSize(12000);
+				dispatch(circleSizeChanged(12000));
 				break;
 			case 9:
-				setCircleSize(6000);
+				dispatch(circleSizeChanged(6000));
 				break;
 			case 10:
-				setCircleSize(3000);
+				dispatch(circleSizeChanged(3000));
 				break;
 			case 11:
-				setCircleSize(3000);
+				dispatch(circleSizeChanged(2000));
 				break;
 
 			default:
-				setCircleSize(6000);
+				dispatch(circleSizeChanged(3000));
 				break;
 		}
-	};
+	}, [zoom]);
 
 	return (
 		<>
@@ -143,7 +156,7 @@ export default function GeoMap() {
 					<Map
 						defaultState={{
 							center: [parsedLatitude, parsedLongitude],
-							zoom: zoom,
+							zoom: 9,
 							controls: ['zoomControl'],
 						}}
 						options={{
@@ -156,7 +169,7 @@ export default function GeoMap() {
 						instanceRef={mapRef as any}
 					>
 						<Circle
-							geometry={[[parsedLatitude, parsedLongitude], 80000]}
+							geometry={[[parsedLatitude, parsedLongitude], circleSize]}
 							options={{
 								draggable: true,
 								fillColor: '#DB709377',
