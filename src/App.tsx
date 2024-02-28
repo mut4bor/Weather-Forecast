@@ -8,18 +8,18 @@ import GeoMap from './components/GeoMap';
 import ModalWindowTemplate from './components/ModalWindowTemplate';
 
 function App() {
-	return (
-		<>
-			<ModalWindow>
-				<Loading />
-				<Weather />
-				<Form />
-				<Settings />
-			</ModalWindow>
-			<GeoMap />
-			<ModalWindowTemplate />
-		</>
-	);
+  return (
+    <>
+      <ModalWindow>
+        <Loading />
+        <Weather />
+        <Form />
+        <Settings />
+      </ModalWindow>
+      <GeoMap />
+      <ModalWindowTemplate />
+    </>
+  );
 }
 
 export default App;
